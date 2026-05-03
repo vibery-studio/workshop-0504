@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The notebook — illustrations from Session 1</title>
+<meta name="description" content="Hand-drawn Moleskine-style illustrations from the AI Orchestration workshop · WebMD HS · 04/05/2026" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --dark: #141413; --light: #faf9f5; --mid: #b0aea5; --light-gray: #e8e6dc;
+    --orange: #d97757; --blue: #6a9bcc; --green: #788c5d; --yellow: #d4a84b;
+    --font-head: "Be Vietnam Pro", system-ui, sans-serif;
+    --font-body: "Lora", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body); background: var(--light); color: var(--dark);
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+    padding: 56px 5vw 80px;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 44px; }
+  .kicker {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 16px;
+  }
+  h1 {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: clamp(2rem, 5vw, 2.9rem);
+    line-height: 1.12; margin: 0 0 14px; letter-spacing: -0.02em;
+  }
+  h1 .mark { color: var(--orange); font-style: italic; font-family: var(--font-body); font-weight: 400; }
+  .sub {
+    font-family: var(--font-body); font-style: italic;
+    font-size: 1.05rem; opacity: 0.72; max-width: 640px; margin: 0 auto;
+  }
+  .meta {
+    font-family: var(--font-mono); font-size: 11px; opacity: 0.5;
+    margin-top: 12px;
+  }
+
+  .grid {
+    display: grid; gap: 26px;
+    grid-template-columns: 1fr;
+    margin-top: 8px;
+  }
+  @media (min-width: 720px) {
+    .grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+  }
+
+  .panel {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-radius: 14px; padding: 14px 14px 18px;
+    box-shadow: 0 6px 22px rgba(20, 20, 19, 0.06);
+    display: flex; flex-direction: column;
+  }
+  .panel-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: var(--light-gray);
+    border-radius: 8px; overflow: hidden;
+    position: relative;
+    margin-bottom: 14px;
+  }
+  .panel-img::after {
+    content: "frame coming soon"; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px; opacity: 0.45;
+    pointer-events: none;
+  }
+  .panel-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    position: relative; z-index: 1;
+  }
+  .label {
+    font-family: var(--font-mono); font-size: 10.5px; opacity: 0.5;
+    letter-spacing: 0.06em;
+  }
+  .caption {
+    font-family: var(--font-body); font-style: italic;
+    font-size: 0.95rem; line-height: 1.45; opacity: 0.85;
+    margin: 4px 0 0;
+  }
+
+  footer {
+    margin-top: 64px; padding-top: 24px;
+    border-top: 1px solid var(--light-gray);
+    text-align: center;
+    font-family: var(--font-mono); font-size: 11px; opacity: 0.55;
+    letter-spacing: 0.04em;
+  }
+  footer a { color: var(--dark); text-decoration: underline; opacity: 0.8; }
+
+  @media print {
+    body { padding: 24px; background: white; }
+    .panel { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+    .grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Workshop · WebMD Health Services VN · 04/05/2026</div>
+  <h1>The <span class="mark">notebook</span>.</h1>
+  <p class="sub">Hand-drawn illustrations of every concept we touched in Session 1. Same visual style across the deck — Moleskine notebook on cream paper.</p>
+  <div class="meta">15 frames · save what you like · share with your team</div>
+</header>
+
+<div class="grid">
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-01-hero-rctco.png" alt="RCTCO — five letters circled in highlighter on a Moleskine page" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">01 · the cover</div>
+    <p class="caption">RCTCO. Five slots. Every prompt your team can run cold needs all five.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-02-who-tasks.png" alt="Five Post-it notes with anonymized tasks" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">02 · who's here</div>
+    <p class="caption">Five surveyed tasks, anonymized as Post-its. Every task fits one of the 5 patterns.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-04-questions.png" alt="A skeptic's notebook of fragmentary questions" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">03 · the questions you may ask</div>
+    <p class="caption">Three honest questions, three honest yes-buts. Models change. Delegation doesn't.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-04-the-gap.png" alt="Two-page Moleskine spread — lucky prompt struck through, team asset clean" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">04 · the gap</div>
+    <p class="caption">Lucky prompt vs team asset. Same task, two outputs, the gap between them is today.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-05-honest-foundation.png" alt="Foundation written in highlighter, hype words crossed out above" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">05 · foundation, on purpose</div>
+    <p class="caption">Skills, agents, AI workforce — they all sit on a prompt that works. Fix the foundation first.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-06-open-assistant.png" alt="Three install paths converging on Coach with timing labels" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">06 · open your assistant</div>
+    <p class="caption">Three paths to Coach. Skill (60 sec) · Project (3 min) · Paste-block (30 sec).</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-07-five-doors.png" alt="Five doors leading to one back room with five verbs on the wall" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">07 · five doors, same room</div>
+    <p class="caption">Five product surfaces. Same back room of work — draft, synthesize, review, critique, translate.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-08-todays-path.png" alt="Hand-drawn timeline of the workshop schedule" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">08 · today's path</div>
+    <p class="caption">Three hours, three acts. Module 2 is the heart — 80 minutes on your real task.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-13-five-tests.png" alt="Checklist of the 5 tests every prompt must pass" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">09 · the 5 tests</div>
+    <p class="caption">Reproducibility · Boundedness · Testability · Reusability · Auditability. Score out of 25.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-15-three-turn-loop.png" alt="Three-turn iteration loop drawn as cycle" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">10 · the 3-turn loop</div>
+    <p class="caption">Don't throw away output. Build → self-grade → rewrite. Three turns beats starting over.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-16-five-patterns.png" alt="Five archetype thumbnails for the named patterns" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">11 · the 5 patterns</div>
+    <p class="caption">Drafter · Synthesizer · Reviewer · Critic · Translator. Name the pattern, know the prompt.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-22-coach-is-project.png" alt="Coach revealed as a Claude Project — system prompt + knowledge files" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">12 · Coach IS a Project</div>
+    <p class="caption">You've been using a Project all morning. Same pattern works for any repeated workflow on your team.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-23-where-prompts-live.png" alt="Folder tree showing prompts/ structure with Post-it badges" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">13 · where good prompts live</div>
+    <p class="caption">Versioned · reviewable · discoverable · releasable. The four properties your code already has.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-23-ladder.png" alt="Four-rung ladder — Prompt to Project to Repo to Skill" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">14 · the ladder</div>
+    <p class="caption">Prompt → Project → Repo → Skill. Same pattern, four rungs. Each rung tests harder.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-img">
+      <img src="../images/slide-25-take-home.png" alt="Four things in a notebook pocket — the take-home contract" onerror="this.style.display='none'" />
+    </div>
+    <div class="label">15 · take home</div>
+    <p class="caption">Four things in your pocket forever — Coach, Context Card, Cheat Sheet, Repo Idea.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>15 illustrations · same Moleskine notebook style across the workshop · all hand-drawn for Session 1.</p>
+  <p style="margin-top: 6px;"><a href="../slides.html">↩ back to slides</a> · <a href="comic-recap.html">comic recap</a></p>
+</footer>
+
+</div>
+</body>
+</html>

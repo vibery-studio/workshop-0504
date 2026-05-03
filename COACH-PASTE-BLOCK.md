@@ -132,7 +132,6 @@ QUICK QUESTIONS (you answer, I assemble):
 If you skip these, I will mark each as [ASSUMPTION] in the prompt
 and you fill in later. Either is fine.
 
-═══════════════════════════════
 NEXT MOVE: paste answers (1-5) OR type "skip" to get a draft with
 [ASSUMPTION] tags everywhere.
 ```
@@ -170,13 +169,12 @@ TWO FIXES, ranked by impact:
 2. [Concrete edit]
    → bumps [test] N→N
 
-─── FIXED PROMPT (both fixes applied — copy this whole block) ───
+**FIXED PROMPT (both fixes applied — copy this whole block)**
 ```
 [the full prompt with both fixes integrated, ready to paste back]
 ```
-─── end ───
+**end**
 
-═══════════════════════════════
 NEXT MOVE: copy the FIXED PROMPT above, paste it as your next message — I will re-score.
 ```
 
@@ -186,7 +184,7 @@ NEXT MOVE: copy the FIXED PROMPT above, paste it as your next message — I will
 - Apply floor rules (see § The 5 tests) BEFORE scoring. If a floor triggers, the reason line names which floor + the trigger phrase.
 - Fixes must be concrete: quote the exact phrase, show the rewrite. Never say "be more specific" — show what specific looks like.
 - Always exactly 2 fixes (not 1, not 5). Pick the highest-impact two — usually the two lowest scores OR the two with the steepest fix-to-score gain.
-- **Always emit the FIXED PROMPT block** — the full prompt with both fixes integrated, ready to copy-paste. This eliminates the manual edit-and-paste loop. The block must be the WHOLE prompt, not just the changed lines. If total ≥ 22, the FIXED PROMPT may be omitted and replaced with: `─── FIXED PROMPT ─── (already at 22+, no fixes needed) ───`.
+- **Always emit the FIXED PROMPT block** — the full prompt with both fixes integrated, ready to copy-paste. This eliminates the manual edit-and-paste loop. The block must be the WHOLE prompt, not just the changed lines. If total ≥ 22, the FIXED PROMPT may be omitted and replaced with: `**FIXED PROMPT** (already at 22+, no fixes needed) ---`.
 - If total ≥ 18, congratulate briefly: "Team-asset bar passed. Optional polish below."
 - If total ≤ 10, be kind: "Strong starting point — biggest two gaps to close first."
 - Anchor against the 3 calibration examples (`references/01-five-tests.md` § Calibration set) before committing to a score.
@@ -213,7 +211,6 @@ Why: [1 sentence linking the symptom to the missing slot]
 The fix — add to your prompt:
 [Quote-block of the exact lines to add]
 
-═══════════════════════════════
 NEXT MOVE: rerun with the fix above, paste new output if still off.
 ```
 
@@ -243,13 +240,12 @@ Three things will change in how I score your prompts now:
 2. [specific test — e.g., "Auditability: I'll require [COMPLIANCE — HIPAA] tags on PHI touches"]
 3. [specific test — e.g., "Testability: I'll match output shape to your past PRD example"]
 
-─── SAVE THIS CARD (if you haven't already) ───
+**SAVE THIS CARD (if you haven't already)**
 Filename suggestion: `team-context-[your-role-or-product]-v1.md`
 Where: anywhere you can paste from quickly — Notes, Obsidian, Drive, the start of any prompt template.
 Why: paste this card before any prompt forever. +3 to +5 score every time.
-─── end ───
+**end**
 
-═══════════════════════════════
 NEXT MOVE: paste your prompt OR a task — I will score it against the 5 tests AND your team standards.
 ```
 
@@ -266,7 +262,7 @@ If they ALSO included a prompt/task in the same message, immediately enter AUDIT
 - **Project-export offer (NEW behavior).** When you've audited a user's prompt to 22+/25 in this chat AND a Context Card was previously loaded via PERSONALIZE in the same chat, append this offer to your AUDIT response (after the FIXED PROMPT block, before NEXT MOVE):
 
   ```
-  ─── PROMOTE TO A CLAUDE PROJECT (optional, recommended) ───
+  **PROMOTE TO A CLAUDE PROJECT (optional, recommended)**
   Your prompt is at 22+/25 + Context Card loaded. Want me to format both
   as ready-to-paste Claude Project custom instructions?
   
@@ -276,7 +272,7 @@ If they ALSO included a prompt/task in the same message, immediately enter AUDIT
   
   Paste that into Claude.ai → Projects → New Project → Custom instructions.
   Name the Project after the pattern (e.g. "Drafter — User Stories").
-  ─── end ───
+  **end**
   ```
 
   When the user types "format for project" (or similar — "yes", "do it", "format", "project please"), produce the merged block in a single markdown code block, with Context Card on top, two blank lines, then the RCTCO prompt below — ready to copy-paste verbatim. Add a one-line tip after: "Save the Project URL somewhere reusable — Notion, Confluence, pinned tab. That URL IS your reusable prompt now."
@@ -300,9 +296,7 @@ MODE: Build-Card · Formatting your raw notes into a reusable Context Card.
  "Your DoD mentions PHI — do you flag with [COMPLIANCE — HIPAA] or [COMPLIANCE — PDPL] or both?"
 Otherwise skip to the card.]
 
-═══════════════════════════════
 Save this as `team-context-card-v1.md`. Paste it before any prompt forever.
-═══════════════════════════════
 
 ```markdown
 # Team Context Card · v1
@@ -324,7 +318,6 @@ Save this as `team-context-card-v1.md`. Paste it before any prompt forever.
 When I ask for X, mirror this style.
 ```
 
-═══════════════════════════════
 NEXT MOVE: copy the markdown above, save as a `.md` file. Then paste it as turn-1 of any new chat — your prompts now score +3 to +5 higher.
 ```
 

@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Inject your team — the 3-layer context card</title>
+<meta name="description" content="Vocab · Standards · Examples. The 3 layers that turn an 18/25 prompt into a 22/25 prompt by externalizing your team's tacit knowledge. Workshop session 1, slide 20 deep-dive." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --dark: #141413; --light: #faf9f5; --mid: #b0aea5; --light-gray: #e8e6dc;
+    --orange: #d97757; --blue: #6a9bcc; --green: #788c5d; --red: #c07a6e; --yellow: #d4a84b; --purple: #a07fb5;
+    --font-head: "Be Vietnam Pro", system-ui, sans-serif;
+    --font-body: "Lora", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body); background: var(--light); color: var(--dark);
+    line-height: 1.65; -webkit-font-smoothing: antialiased;
+    padding: 48px 5vw 64px;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; }
+
+  /* ---------- header ---------- */
+  .kicker {
+    font-family: var(--font-head); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.06;
+    margin: 0 0 14px;
+  }
+  .lede {
+    font-family: var(--font-body); font-size: 1.15rem;
+    max-width: 760px; opacity: 0.9; margin: 0 0 12px;
+  }
+  .meta-bar {
+    font-family: var(--font-mono); font-size: 12px; opacity: 0.6;
+    margin-bottom: 32px;
+  }
+  .back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-head); font-size: 13px;
+    color: var(--dark); text-decoration: none;
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+  .back:hover { opacity: 1; color: var(--orange); }
+  .back svg { width: 14px; height: 14px; }
+
+  /* ---------- TOC ---------- */
+  .toc {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 44px;
+    padding: 14px 18px;
+    background: rgba(250,249,245,0.92);
+    border: 1px solid var(--light-gray); border-radius: 12px;
+    position: sticky; top: 12px; z-index: 5;
+    backdrop-filter: blur(8px);
+  }
+  .toc-label {
+    font-family: var(--font-mono); font-size: 11px; opacity: 0.55;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    align-self: center; margin-right: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .toc-label svg { width: 13px; height: 13px; }
+  .toc a {
+    font-family: var(--font-head); font-size: 13px; font-weight: 600;
+    color: var(--dark); text-decoration: none;
+    padding: 5px 12px; border-radius: 16px;
+    border: 1px solid var(--light-gray);
+    transition: all 0.15s;
+  }
+  .toc a:hover { background: var(--orange); color: var(--light); border-color: var(--orange); }
+
+  /* ---------- intro card ---------- */
+  .intro {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-radius: 16px;
+    margin-bottom: 28px;
+    padding: 24px 28px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px;
+  }
+  .intro .stat {
+    border-left: 3px solid var(--orange);
+    padding-left: 14px;
+  }
+  .intro .stat:nth-child(2) { border-left-color: var(--blue); }
+  .intro .stat:nth-child(3) { border-left-color: var(--green); }
+  .intro .stat-num {
+    font-family: var(--font-head); font-weight: 700; font-size: 1.6rem;
+    line-height: 1.1; margin-bottom: 4px;
+  }
+  .intro .stat-label {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    opacity: 0.65;
+  }
+  .intro .stat-body {
+    font-family: var(--font-body); font-size: 13.5px;
+    margin-top: 6px; opacity: 0.85; line-height: 1.55;
+  }
+  @media (max-width: 720px) { .intro { grid-template-columns: 1fr; } }
+
+  /* ---------- pattern card (re-used as layer card) ---------- */
+  .pattern {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-radius: 16px;
+    margin-bottom: 28px;
+    border-top: 4px solid var(--orange);
+    scroll-margin-top: 80px;
+    overflow: hidden;
+  }
+  .pattern[data-color="blue"] { border-top-color: var(--blue); }
+  .pattern[data-color="green"] { border-top-color: var(--green); }
+  .pattern[data-color="red"] { border-top-color: var(--red); }
+  .pattern[data-color="purple"] { border-top-color: var(--purple); }
+
+  .pattern-head {
+    padding: 32px 36px 22px;
+    display: flex; align-items: flex-start; gap: 18px;
+  }
+  .pattern-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(217,119,87,0.1);
+    color: var(--orange);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .pattern[data-color="blue"] .pattern-icon { background: rgba(106,155,204,0.12); color: var(--blue); }
+  .pattern[data-color="green"] .pattern-icon { background: rgba(120,140,93,0.12); color: var(--green); }
+  .pattern[data-color="red"] .pattern-icon { background: rgba(192,122,110,0.12); color: var(--red); }
+  .pattern[data-color="purple"] .pattern-icon { background: rgba(160,127,181,0.12); color: var(--purple); }
+  .pattern-icon svg { width: 24px; height: 24px; }
+
+  .pattern-head .text { flex: 1; }
+  .pattern-name-row {
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .pattern-name {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 1.65rem; letter-spacing: -0.02em;
+  }
+  .pattern-tag {
+    font-family: var(--font-mono); font-size: 11px;
+    background: var(--light-gray); padding: 4px 10px; border-radius: 12px;
+    color: var(--dark); opacity: 0.7;
+    letter-spacing: 0.06em;
+  }
+  .pattern-what {
+    font-family: var(--font-body); font-size: 1rem;
+    opacity: 0.85; margin: 0;
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs {
+    display: flex; gap: 0;
+    padding: 0 36px;
+    border-bottom: 1px solid var(--light-gray);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    background: none; border: none;
+    padding: 14px 18px;
+    font-family: var(--font-head); font-weight: 600; font-size: 13.5px;
+    color: var(--dark); opacity: 0.55;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    display: inline-flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+    transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .tab svg { width: 15px; height: 15px; }
+  .tab:hover { opacity: 0.85; }
+  .tab.active {
+    opacity: 1;
+    color: var(--orange);
+    border-bottom-color: var(--orange);
+  }
+  .pattern[data-color="blue"] .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .pattern[data-color="green"] .tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .pattern[data-color="red"] .tab.active { color: var(--red); border-bottom-color: var(--red); }
+  .pattern[data-color="purple"] .tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+  .tab-panels { padding: 28px 36px 32px; }
+  .panel { display: none; animation: fade-in 0.25s ease; }
+  .panel.active { display: block; }
+  @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- panel: prompt-block (reused for examples + template) ---------- */
+  .prompt-block {
+    background: #0d0d0c; color: #e8e6dc;
+    border-radius: 12px; padding: 22px 24px 18px;
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.65;
+    position: relative;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+  }
+  .prompt-block .ph-slot {
+    color: var(--orange); font-weight: 600;
+    display: inline-block;
+  }
+  .prompt-block .ph-placeholder {
+    background: rgba(212,168,75,0.18);
+    color: var(--yellow);
+    padding: 1px 6px; border-radius: 4px;
+    font-size: 12px;
+  }
+  .prompt-block .ph-tag {
+    background: rgba(217,119,87,0.18);
+    color: var(--orange);
+    padding: 1px 6px; border-radius: 4px;
+    font-size: 12px;
+  }
+  .copy-btn {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(255,255,255,0.08);
+    color: var(--light);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 6px 12px; border-radius: 18px;
+    font-family: var(--font-head); font-size: 12px; font-weight: 500;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--orange); border-color: var(--orange); }
+  .copy-btn.copied { background: var(--green); border-color: var(--green); }
+  .copy-btn svg { width: 13px; height: 13px; }
+
+  .prompt-hint {
+    margin-top: 14px;
+    font-family: var(--font-body); font-size: 13.5px; opacity: 0.75;
+    line-height: 1.55;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .prompt-hint svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--orange); }
+
+  /* ---------- panel: lineage / why ---------- */
+  .lineage {
+    font-family: var(--font-body); font-size: 15.5px; line-height: 1.7;
+    margin: 0 0 14px;
+  }
+  .lineage:last-child { margin-bottom: 0; }
+  .lineage b { font-weight: 600; }
+  .lineage a {
+    color: var(--dark);
+    border-bottom: 1px dotted var(--mid);
+    text-decoration: none;
+  }
+  .lineage a:hover { color: var(--orange); border-bottom-color: var(--orange); }
+
+  /* ---------- panel: how-to (numbered steps) ---------- */
+  .steps { list-style: none; padding: 0; margin: 0; counter-reset: step; }
+  .steps li {
+    padding: 14px 0 14px 44px;
+    border-bottom: 1px dashed var(--light-gray);
+    position: relative;
+    font-size: 14.5px; line-height: 1.6;
+    counter-increment: step;
+  }
+  .steps li:last-child { border-bottom: none; padding-bottom: 0; }
+  .steps li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 12px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--orange); color: var(--light);
+    display: grid; place-items: center;
+    font-family: var(--font-head); font-weight: 600; font-size: 13px;
+  }
+  .pattern[data-color="blue"] .steps li::before { background: var(--blue); }
+  .pattern[data-color="green"] .steps li::before { background: var(--green); }
+  .steps .sname {
+    font-family: var(--font-head); font-weight: 600;
+    font-size: 14.5px; color: var(--dark);
+    display: block; margin-bottom: 4px;
+  }
+  .steps .sbody { opacity: 0.85; }
+  .steps .sbody code {
+    background: var(--light-gray); padding: 1px 5px; border-radius: 3px;
+    font-size: 12px; font-family: var(--font-mono);
+  }
+
+  /* ---------- panel: pitfalls ---------- */
+  .failures { list-style: none; padding: 0; margin: 0; }
+  .failures li {
+    padding: 14px 0 14px 36px;
+    border-bottom: 1px dashed var(--light-gray);
+    position: relative;
+    font-size: 14.5px; line-height: 1.6;
+  }
+  .failures li:last-child { border-bottom: none; padding-bottom: 0; }
+  .failures li svg.fail-icon {
+    position: absolute; left: 0; top: 16px;
+    width: 18px; height: 18px;
+    color: var(--red);
+  }
+  .failures .fname {
+    font-family: var(--font-head); font-weight: 600;
+    font-size: 14.5px; color: var(--dark);
+    display: block; margin-bottom: 4px;
+  }
+  .failures .fbody { opacity: 0.85; }
+  .failures .fbody code {
+    background: var(--light-gray); padding: 1px 5px; border-radius: 3px;
+    font-size: 12px; font-family: var(--font-mono);
+  }
+
+  /* ---------- maintenance callout ---------- */
+  .maint {
+    background: rgba(212,168,75,0.1);
+    border: 1px solid rgba(212,168,75,0.3);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-top: 28px;
+    display: flex; gap: 16px;
+    align-items: flex-start;
+  }
+  .maint .micon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: rgba(212,168,75,0.25);
+    color: #8a6d20;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .maint .micon svg { width: 18px; height: 18px; }
+  .maint h4 {
+    font-family: var(--font-head); font-weight: 600; font-size: 1rem;
+    margin: 0 0 6px;
+  }
+  .maint p { margin: 0; font-size: 14px; opacity: 0.85; line-height: 1.55; }
+  .maint ul {
+    margin: 8px 0 0; padding-left: 20px;
+    font-size: 13.5px; line-height: 1.6; opacity: 0.85;
+  }
+
+  /* ---------- sources block ---------- */
+  .sources-block {
+    background: #fff; border: 1px solid var(--light-gray); border-radius: 14px;
+    padding: 24px 28px; margin-top: 28px;
+  }
+  .sources-block h3 {
+    font-family: var(--font-head); font-weight: 600; font-size: 1.1rem;
+    margin: 0 0 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sources-block h3 svg { width: 18px; height: 18px; color: var(--orange); }
+  .sources-block ul { list-style: none; padding: 0; margin: 0; }
+  .sources-block li {
+    font-family: var(--font-mono); font-size: 12px; line-height: 1.55;
+    padding: 6px 0; opacity: 0.85;
+  }
+  .sources-block a { color: var(--orange); text-decoration: none; }
+  .sources-block a:hover { text-decoration: underline; }
+
+  /* ---------- footer ---------- */
+  .footer {
+    margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--light-gray);
+    font-family: var(--font-mono); font-size: 12px; opacity: 0.6;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+
+  @media (max-width: 720px) {
+    .pattern-head, .tabs, .tab-panels { padding-left: 22px; padding-right: 22px; }
+    .toc { position: static; }
+    .tab { padding: 12px 14px; font-size: 13px; }
+  }
+  @media print {
+    body { padding: 24px; }
+    .pattern { page-break-inside: avoid; box-shadow: none; }
+    .toc, .copy-btn { display: none; }
+    .tabs { display: none; }
+    .panel { display: block !important; }
+    .panel:not(:first-child) { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--light-gray); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../slides.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    back to slides
+  </a>
+  <div class="kicker">Workshop reference · session 1 · slide 20 deep-dive</div>
+  <h1>Inject your team — the 3-layer context card</h1>
+  <p class="lede">A working RCTCO prompt scores ~18/25. The same prompt with your team injected scores ~22/25 — without rewriting a single line of the prompt itself. The leverage isn't a better prompt; it's externalizing the tacit knowledge you already carry. <b>Three layers: vocab, standards, examples. Fill once. Paste forever.</b></p>
+  <div class="meta-bar">Sources cited inline. Last updated 2026-05-02 · WebMD HS workshop · author: Tony Bùi</div>
+
+  <div class="toc">
+    <span class="toc-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      jump:
+    </span>
+    <a href="#vocab">Layer 1 · Vocab</a>
+    <a href="#standards">Layer 2 · Standards</a>
+    <a href="#examples">Layer 3 · Examples</a>
+    <a href="#assemble">Assemble</a>
+    <a href="#sources">Sources</a>
+  </div>
+
+  <!-- ============ INTRO STATS ============ -->
+  <div class="intro">
+    <div class="stat">
+      <div class="stat-num">Layer 1</div>
+      <div class="stat-label">Vocab · how you talk</div>
+      <div class="stat-body">5 user roles. Product names. Banned phrases. Tooling names. Cross-language pairs. <b>5 min to extract.</b></div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Layer 2</div>
+      <div class="stat-label">Standards · the bar</div>
+      <div class="stat-body">DoD checklist. AC format. PRD section order. Compliance flags. <b>10 min to extract.</b></div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Layer 3</div>
+      <div class="stat-label">Examples · the magic ingredient</div>
+      <div class="stat-body">ONE sanitized past artifact. Shape, not content. Beats every rule you could write. <b>10 min to sanitize.</b></div>
+    </div>
+  </div>
+
+  <!-- ============ LAYER 1 — VOCAB ============ -->
+  <article class="pattern" id="vocab">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- icon: book / glossary -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Layer 1 — Vocab</div>
+          <span class="pattern-tag">how your team actually talks</span>
+        </div>
+        <p class="pattern-what">Members not users. WebMD ONE not "the platform." YouTrack ticket not Jira issue. The lexicon your team enforces in YouTrack search, in Confluence, in handoffs — externalized so AI stops drifting toward generic SaaS vocabulary.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="voc-why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Why</button>
+      <button class="tab" data-panel="voc-how"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>How to extract</button>
+      <button class="tab" data-panel="voc-ex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Worked example</button>
+      <button class="tab" data-panel="voc-pit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Pitfalls</button>
+    </div>
+
+    <div class="tab-panels">
+      <!-- WHY -->
+      <div class="panel active" id="voc-why">
+        <p class="lineage">Inherits from <b>terminology management</b> in technical writing and localization — the discipline behind <a href="https://www.iso.org/standard/45797.html" target="_blank" rel="noopener">ISO 30042 (TBX)</a>, the OASIS <a href="https://docs.oasis-open.org/dita/dita/v1.3/dita-v1.3-part0-overview.html" target="_blank" rel="noopener">DITA standard</a>, and DocBook glossary discipline. Every mature documentation team maintains a controlled vocabulary because inconsistent terms break search, traceability, and translation. The same mechanic now applies to AI output.</p>
+        <p class="lineage">The AI-specific failure: even with a Role specified, models default to vocabulary that's overrepresented in training data — generic SaaS words like "user", "customer", "platform", "ticket". A senior PM specifying "wellness coach" gets back "clinician" or "therapist" because that's what most healthcare text on the open web says. Specifying the role does not override the prior; explicit vocab does.</p>
+        <p class="lineage">The compounding cost: every wrong term in output is a manual rewrite, a lost YouTrack search hit, a Confluence link that doesn't resolve, and slow vocabulary drift across the team. Over a quarter, the cost of NOT having a vocab card is measured in re-edited tickets and member-facing copy that fails brand review.</p>
+      </div>
+
+      <!-- HOW -->
+      <div class="panel" id="voc-how">
+        <ul class="steps">
+          <li>
+            <span class="sname">List the 5–7 user roles your team names</span>
+            <span class="sbody">Open your last shipped PRD. Underline every persona word: <code>member</code>, <code>health coach</code>, <code>HR program manager</code>, <code>employer</code>, <code>account owner</code>. Write down what your team calls them — not what the textbook calls them.</span>
+          </li>
+          <li>
+            <span class="sname">List your products and acronyms</span>
+            <span class="sbody">Full names + the short forms you actually use. <code>WebMD ONE</code>, <code>TINYpulse</code>, <code>embody</code>, <code>BAA</code> (Business Associate Agreement), <code>HRA</code> (Health Risk Assessment). 3–5 acronyms is enough; pick the ones a new hire would Google.</span>
+          </li>
+          <li>
+            <span class="sname">List 3–5 banned phrases</span>
+            <span class="sbody">The "never say this" set. Examples: never imply medical advice in member-facing copy; never use "Oops!" in error messages; never call members "patients"; never use "powered by" in co-branded surfaces. The negative space is more useful than the positive.</span>
+          </li>
+          <li>
+            <span class="sname">List your tooling vocab</span>
+            <span class="sbody">Most people remember domain words and forget tools. Be specific: <code>YouTrack ticket</code> (not "Jira issue"), <code>Confluence space</code> (not "Notion page"), <code>Figma frame</code> (not "screen"), <code>sprint cadence: 2 weeks</code>. AI defaults to whatever's most common in its training set — usually Jira.</span>
+          </li>
+          <li>
+            <span class="sname">Add cross-language pairs if you work in 2+ languages</span>
+            <span class="sbody">EN ↔ VN: <code>member = thành viên</code>, <code>health coach = huấn luyện viên</code>, <code>HR program manager = quản lý chương trình HR</code>. Critical for YouTrack search where bilingual tickets need consistent terms.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- WORKED EXAMPLE -->
+      <div class="panel" id="voc-ex">
+        <div class="prompt-block"><button class="copy-btn" data-target="voc-ex-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button><span id="voc-ex-text"><span class="ph-slot">### Layer 1 — How my team talks</span>
+
+<span class="ph-slot">Products:</span> WebMD ONE (web + mobile member app), TINYpulse (engagement pulse surveys), embody (coaching workflow tool).
+
+<span class="ph-slot">User roles (use exactly):</span>
+- <span class="ph-tag">member</span> — the employee enrolled in the program. Never "user", "patient", "customer".
+- <span class="ph-tag">health coach</span> — the licensed coach assigned to a member. Never "clinician", "therapist", "advisor".
+- <span class="ph-tag">HR program manager</span> — the buyer-side admin. Never "HR admin", "client".
+- <span class="ph-tag">employer</span> — the contracting company. Never "customer", "tenant".
+- <span class="ph-tag">account owner</span> — internal CSM. Never "rep".
+
+<span class="ph-slot">Acronyms:</span>
+- <span class="ph-tag">BAA</span> = Business Associate Agreement (HIPAA contract)
+- <span class="ph-tag">HRA</span> = Health Risk Assessment
+- <span class="ph-tag">EAP</span> = Employee Assistance Program
+- <span class="ph-tag">PHI</span> = Protected Health Information
+
+<span class="ph-slot">Tooling:</span> YouTrack tickets (not Jira). Confluence spaces (not Notion). Figma frames (not screens). 2-week sprints. PRDs live in Confluence under <span class="ph-tag">Product / WebMD-ONE / PRDs</span>.
+
+<span class="ph-slot">Banned phrases:</span>
+- Never imply medical advice in member-facing copy.
+- Never use "Oops!" or "Sorry!" in error messages — use neutral, instructional tone.
+- Never use "powered by" on co-branded employer surfaces.
+- Never write "patient" — we serve members, not patients.
+
+<span class="ph-slot">Cross-language pairs (EN / VN):</span>
+- member / thành viên
+- health coach / huấn luyện viên sức khỏe
+- HR program manager / quản lý chương trình HR
+- assessment / đánh giá (never "kiểm tra")</span></div>
+        <div class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Notice: this is ~30 lines, not 300. The discipline is curation. Your future self will paste this hundreds of times — every line that doesn't earn its place adds friction.
+        </div>
+      </div>
+
+      <!-- PITFALLS -->
+      <div class="panel" id="voc-pit">
+        <ul class="failures">
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Including obvious terms</span>
+            <span class="fbody">No need to teach AI "user story", "sprint", "backlog". Stick to terms that distinguish your team from a generic SaaS team. If it's in the Scrum Guide, skip it.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Missing cross-team aliases</span>
+            <span class="fbody">Sales calls them "clients". Product calls them "members". Engineering calls them "users" in code. Pick ONE for AI output and explicitly ban the others — otherwise AI mirrors whichever appears most in your context.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Forgetting tooling vocab</span>
+            <span class="fbody">Most people remember domain terms (member, coach) and forget tools. AI will write "create a Jira ticket" because Jira dominates the training data. Explicitly say <code>YouTrack</code> or you'll fix it in every output.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Not updating quarterly</span>
+            <span class="fbody">Vocab evolves faster than people notice. New product names ship; acronyms get retired; banned phrases shift after a brand review. A vocab card from 6 months ago drifts silently — schedule a quarterly 15-min review.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ LAYER 2 — STANDARDS ============ -->
+  <article class="pattern" id="standards" data-color="blue">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- icon: check-square (DoD) -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Layer 2 — Standards</div>
+          <span class="pattern-tag">the bar your tech lead enforces</span>
+        </div>
+        <p class="pattern-what">The Definition of Done your tech lead enforces. The AC format your team writes in. The PRD section order your reviewers expect. The compliance flags your auditors look for. The standards you follow without thinking — externalized so AI follows them too.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="std-why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Why</button>
+      <button class="tab" data-panel="std-how"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>How to extract</button>
+      <button class="tab" data-panel="std-ex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Worked example</button>
+      <button class="tab" data-panel="std-pit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Pitfalls</button>
+    </div>
+
+    <div class="tab-panels">
+      <!-- WHY -->
+      <div class="panel active" id="std-why">
+        <p class="lineage">Inherits from the <b>Definition of Done</b> as a Scrum core practice (Schwaber & Sutherland, <a href="https://scrumguides.org/scrum-guide.html" target="_blank" rel="noopener">Scrum Guide</a>) and from the <b>Given-When-Then</b> formalism that Dan North introduced with <a href="https://dannorth.net/introducing-bdd/" target="_blank" rel="noopener">BDD in 2006</a>. Both exist for the same reason: tacit standards become visible and contestable when written down. AI brings the same need into sharper focus, because AI doesn't carry your team's tacit knowledge.</p>
+        <p class="lineage">Specific evidence on AI-generated specs: <a href="https://arxiv.org/html/2507.15157v1" target="_blank" rel="noopener">arxiv 2507.15157</a> shows LLM-generated user stories meet AC quality criteria less often than human-written ones, regardless of model scale. ACs from AI tend to be vaguer and miss edge conditions. The fix isn't a smarter model — it's an explicit DoD passed in context.</p>
+        <p class="lineage">The <b>tacit standards trap</b>: senior PMs follow standards they never wrote down. They reject specs without articulating the rule. AI cannot inherit a rule that doesn't exist on paper. Externalizing the DoD is the same exercise that helps a new hire ramp — AI is a permanent new hire that resets every chat.</p>
+      </div>
+
+      <!-- HOW -->
+      <div class="panel" id="std-how">
+        <ul class="steps">
+          <li>
+            <span class="sname">Open your last 3 shipped PRDs your tech lead approved without changes</span>
+            <span class="sbody">The "approved without changes" filter is the trick. These are your team's actual standard, not the aspirational one. If the lead asked for changes, those changes ARE the standard.</span>
+          </li>
+          <li>
+            <span class="sname">List the structural sections that appear in all 3</span>
+            <span class="sbody">Likely: Problem · Goals · Non-goals · User stories · AC · Edge cases · Open questions. The intersection across 3 PRDs is your real PRD shape. Sections that appear in only 1 are situational, not standard.</span>
+          </li>
+          <li>
+            <span class="sname">What does your tech lead ALWAYS reject specs for?</span>
+            <span class="sbody">That's your DoD. Examples: "no AC in G/W/T → reject", "no edge case list → reject", "PHI touched but no compliance flag → reject", "no QA test plan → reject". The rejection patterns ARE the DoD. Write them down.</span>
+          </li>
+          <li>
+            <span class="sname">What's your AC format?</span>
+            <span class="sbody">Pick one: <code>Given / When / Then</code> (BDD), plain bullets, table form. Don't list options — pick the one your team actually uses. Format consistency is what makes AI output droppable into your tooling without rewrites.</span>
+          </li>
+          <li>
+            <span class="sname">What compliance flags do you carry?</span>
+            <span class="sbody">For WebMD HS: <code>[COMPLIANCE — HIPAA]</code>, <code>[COMPLIANCE — PDPL]</code>, <code>[COMPLIANCE — SOC2]</code>, <code>[A11Y — WCAG 2.1 AA]</code>. List the exact tag form your auditor recognizes. AI will use whatever you specify.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- WORKED EXAMPLE -->
+      <div class="panel" id="std-ex">
+        <div class="prompt-block"><button class="copy-btn" data-target="std-ex-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button><span id="std-ex-text"><span class="ph-slot">### Layer 2 — Our quality bar</span>
+
+<span class="ph-slot">Definition of Done (every spec MUST satisfy):</span>
+- AC in Given/When/Then form, one row per scenario
+- 1 mockup link (Figma frame URL, not screenshot)
+- Edge case list: empty / failure / permission / concurrency / offline
+- Compliance flag if PHI or PII touched: <span class="ph-tag">[COMPLIANCE — HIPAA]</span> or <span class="ph-tag">[COMPLIANCE — PDPL]</span>
+- A11y flag if member-facing UI: <span class="ph-tag">[A11Y — WCAG 2.1 AA]</span>
+- QA test plan section (3+ scenarios)
+- Every assumption tagged <span class="ph-tag">[ASSUMPTION: ...]</span>
+- Every open question tagged <span class="ph-tag">[TBC: name/role to confirm]</span>
+
+<span class="ph-slot">AC format (use exactly):</span>
+  Given <state>
+  When <action>
+  Then <observable outcome>
+  And <secondary outcome, optional>
+
+<span class="ph-slot">PRD section order (do not reorder):</span>
+1. Problem statement (3-4 sentences, member impact first)
+2. Goals + Non-goals (bullets, non-goals are required)
+3. Target users (primary + secondary, role names from vocab)
+4. User stories (INVEST, table form)
+5. Acceptance criteria (G/W/T, table per story)
+6. Edge cases (empty / failure / permission / concurrency / offline)
+7. Compliance + accessibility flags
+8. Open questions
+9. QA test plan
+
+<span class="ph-slot">Compliance flag taxonomy:</span>
+- <span class="ph-tag">[COMPLIANCE — HIPAA]</span> — any PHI read/write/transmit
+- <span class="ph-tag">[COMPLIANCE — PDPL]</span> — VN personal data, especially cross-border transfer
+- <span class="ph-tag">[COMPLIANCE — SOC2]</span> — audit log requirements
+- <span class="ph-tag">[A11Y — WCAG 2.1 AA]</span> — member-facing UI components
+- <span class="ph-tag">[BAA-required]</span> — third-party integration touching PHI
+
+<span class="ph-slot">Tech lead's auto-reject patterns (do NOT ship with these):</span>
+- AC written as prose instead of G/W/T → reject
+- PHI mentioned without compliance flag → reject
+- Edge case section missing or empty → reject
+- "TBD" without owner name → reject (use <span class="ph-tag">[TBC: name]</span> instead)</span></div>
+        <div class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          The "auto-reject patterns" block is the negative space. It's the most useful part — it tells AI what NOT to do, which is harder to infer than what to do.
+        </div>
+      </div>
+
+      <!-- PITFALLS -->
+      <div class="panel" id="std-pit">
+        <ul class="failures">
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Generic DoD instead of specific</span>
+            <span class="fbody">"Must be tested" is meaningless to AI (and to humans). "Must have G/W/T AC + 1 mockup link + edge case list + compliance flag if PHI touched" is enforceable. Specificity is the difference between a card that works and one that doesn't.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Listing aspirational standards</span>
+            <span class="fbody">If your team doesn't actually enforce a rule, don't put it in the card. Aspirational standards make AI output that no human follows — the gap erodes trust in the card itself. List only what your tech lead truly rejects PRs for.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Mixing PM standards with engineering standards</span>
+            <span class="fbody">Engineering's DoD ("80% test coverage", "no console.log") belongs in the eng team's card, not yours. Stay in your scope. The card you write is the card you maintain — keep it tight.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Not capturing rejection patterns</span>
+            <span class="fbody">The negative space — what your tech lead REJECTS — is more useful than the positive list. "AC as prose → reject" tells AI more than "AC should be G/W/T". Both belong, but the rejection patterns are usually missing.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ LAYER 3 — EXAMPLES ============ -->
+  <article class="pattern" id="examples" data-color="green">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- icon: star (the magic ingredient) -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Layer 3 — Examples</div>
+          <span class="pattern-tag">the magic ingredient</span>
+        </div>
+        <p class="pattern-what">ONE sanitized past artifact you'd send to a new hire as "this is what good looks like." Concrete examples beat any rule. The shape — section order, edge case patterns, compliance tags, [TBC] markers — sets AI's output distribution more reliably than any abstract instruction.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="exa-why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Why</button>
+      <button class="tab" data-panel="exa-how"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>How to extract</button>
+      <button class="tab" data-panel="exa-ex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Worked example</button>
+      <button class="tab" data-panel="exa-pit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Pitfalls</button>
+    </div>
+
+    <div class="tab-panels">
+      <!-- WHY -->
+      <div class="panel active" id="exa-why">
+        <p class="lineage">Inherits from <b>few-shot prompting</b> — Brown et al. 2020, the GPT-3 paper <a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener">"Language Models are Few-Shot Learners"</a>. The empirical finding has held across model generations: a small number of well-chosen examples beats lengthy abstract instructions at conditioning model output. Examples set the distribution; rules nudge it.</p>
+        <p class="lineage">Specifically on in-context learning mechanics: Min et al. 2022, <a href="https://arxiv.org/abs/2202.12837" target="_blank" rel="noopener">"Rethinking the Role of Demonstrations"</a>, shows that the SHAPE of demonstrations (label space, format, input distribution) matters more than the content correctness. Translation: AI learns "PRDs in this team look like THIS" from one example faster than it learns from 10 rules describing what a PRD should look like.</p>
+        <p class="lineage">Why ONE good example beats 5 generic ones: overspecification dilutes signal. Each additional example competes for attention with the others; the model averages across them. ONE strong, typical example creates a clearer target than five mediocre ones. The <b>sanitization discipline</b> — keep the SHAPE (section order, AC form, flag taxonomy, [TBC] markers), replace identifiers — preserves the signal that matters.</p>
+      </div>
+
+      <!-- HOW -->
+      <div class="panel" id="exa-how">
+        <ul class="steps">
+          <li>
+            <span class="sname">Pick 1 past artifact you'd send to a new hire as "this is good"</span>
+            <span class="sbody">PRD section, YouTrack ticket your dev called "perfect handoff", research synthesis your PM thanked you for, member-facing copy that passed brand review on first try. ONE artifact. The selection itself is the work.</span>
+          </li>
+          <li>
+            <span class="sname">Sanitize: replace real names with bracketed placeholders</span>
+            <span class="sbody">Real members → <code>[Member A]</code>. Real coaches → <code>[Coach 1]</code>. Real customers → <code>[Employer Co]</code>. Real product feature names from unreleased work → <code>[Feature X]</code>. Strip identifiers; keep structure.</span>
+          </li>
+          <li>
+            <span class="sname">Keep all structural elements intact</span>
+            <span class="sbody">Section order, formatting, compliance tags, edge case patterns, <code>[ASSUMPTION]</code> markers, <code>[TBC]</code> markers, table shapes, header levels. The structure IS the signal AI learns from.</span>
+          </li>
+          <li>
+            <span class="sname">Trim to 1 page max</span>
+            <span class="sbody">More content = AI distracted by content vs structure. If your example is 5 pages, pick the most representative 1-page section. The model picks up the SHAPE faster from a focused example than from a sprawling one.</span>
+          </li>
+          <li>
+            <span class="sname">Mark it explicitly: "[EXAMPLE — for shape only, not for reuse]"</span>
+            <span class="sbody">Prevents AI from copying example content into new outputs (a real failure mode — see context-window contamination in the Drafter pattern). The marker tells AI: imitate the form, not the content.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- WORKED EXAMPLE -->
+      <div class="panel" id="exa-ex">
+        <div class="prompt-block"><button class="copy-btn" data-target="exa-ex-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button><span id="exa-ex-text"><span class="ph-slot">### Layer 3 — One example of past good work</span>
+<span class="ph-tag">[EXAMPLE — for shape only, not for reuse]</span>
+
+<span class="ph-slot">## Problem</span>
+<span class="ph-placeholder">[Member A]</span>-type members enrolled in <span class="ph-placeholder">[Program X]</span> drop off after their first coach session at 38% (last 90 days, n=412). The drop coincides with the 7-day gap between session 1 and session 2 — no touchpoint in between.
+
+<span class="ph-slot">## Goals</span>
+- Reduce session-1 → session-2 drop from 38% → 25% in Q3
+- Maintain coach utilization within current band
+
+<span class="ph-slot">## Non-goals</span>
+- Automated coaching content (out of scope for this sprint)
+- Member-to-member messaging (separate roadmap item)
+
+<span class="ph-slot">## User stories</span>
+
+| # | As a | I can | So that | AC (G/W/T) | Flags |
+|---|------|-------|---------|------------|-------|
+| 1 | <span class="ph-placeholder">[member]</span> | receive a check-in nudge between sessions | I stay engaged | see AC-1 | <span class="ph-tag">[COMPLIANCE — HIPAA]</span> <span class="ph-tag">[A11Y — WCAG 2.1 AA]</span> |
+| 2 | <span class="ph-placeholder">[health coach]</span> | see member's nudge engagement before session 2 | I tailor the conversation | see AC-2 | <span class="ph-tag">[COMPLIANCE — HIPAA]</span> |
+
+<span class="ph-slot">## Acceptance criteria</span>
+
+<span class="ph-slot">AC-1 — member nudge:</span>
+  Given a <span class="ph-placeholder">[member]</span> who completed session 1 in the last 5 days
+  When 72 hours have passed since session 1 AND they have not opened the app
+  Then send 1 push notification + 1 in-app card on next open
+  And do not send if the member has opted out of program nudges <span class="ph-tag">[COMPLIANCE — HIPAA: notification content must not include PHI]</span>
+
+<span class="ph-slot">## Edge cases</span>
+- Empty: member has no upcoming session 2 booked → suppress nudge
+- Failure: push delivery fails → fall back to in-app card only
+- Permission: member opted out of nudges → respect; do not log opt-out events as engagement
+- Concurrency: session 2 booked DURING the 72h window → cancel pending nudge
+- Offline: nudge queued; deliver on next online state within 24h or expire
+
+<span class="ph-slot">## Open questions</span>
+- <span class="ph-tag">[TBC: legal — confirm nudge text is not "treatment communication" under HIPAA]</span>
+- <span class="ph-tag">[TBC: <span class="ph-placeholder">[Coach Lead]</span> — confirm coaches want engagement signal in their session-prep view]</span>
+
+<span class="ph-slot">## QA test plan</span>
+- 3 scenarios per AC, run on staging with synthetic <span class="ph-placeholder">[Member A]</span> data
+- Verify no PHI in push notification payload (privacy QA, separate pass)</span></div>
+        <div class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          What this example teaches AI: section order, table shape for stories, G/W/T form for AC, edge case categories (empty/failure/permission/concurrency/offline), how compliance flags attach inline, what a [TBC] looks like with an owner. The model picks all of that up from one read.
+        </div>
+      </div>
+
+      <!-- PITFALLS -->
+      <div class="panel" id="exa-pit">
+        <ul class="failures">
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Picking your most ambitious example</span>
+            <span class="fbody">AI matches AMBITION, not average. Your award-winning PRD will produce AI output that aims for award-winning every time — bloated, over-elaborated, with sections you don't normally write. Pick a TYPICAL good example, not your best one. The card should produce your team's median good work, not its peak.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Skipping sanitization</span>
+            <span class="fbody">Leaks customer data into your prompt history (and into the model provider's logs depending on plan). For HIPAA-touching examples this is a compliance event. Sanitize first, paste second — every time. No exceptions.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Pasting too many examples</span>
+            <span class="fbody">5 examples doesn't give you 5x signal — it gives you noise. The model averages across them and produces output that resembles none of them. ONE strong example is worth 5 mediocre ones. If you must include more, scope each to a different artifact type (PRD example + ticket example), never two of the same kind.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Forgetting to update when team standards evolve</span>
+            <span class="fbody">When your team adopts a new edge case category, retires a flag, or shifts AC format, the example needs to evolve too. Stale examples teach AI old shape. Refresh the example every time you ship a new "best of breed" artifact — or quarterly, whichever comes first.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ ASSEMBLE ============ -->
+  <article class="pattern" id="assemble" data-color="purple">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- icon: package (assemble) -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Assemble the context card</div>
+          <span class="pattern-tag">paste-once template</span>
+        </div>
+        <p class="pattern-what">Stack the 3 layers into one block. Paste this entire card as your FIRST message to Coach (or any new Claude chat). Coach recognizes PERSONALIZE mode and loads your team. Every prompt that follows scores against YOUR standards, not generic ones.</p>
+      </div>
+    </div>
+
+    <div class="tab-panels" style="padding-top: 28px;">
+      <div class="prompt-block"><button class="copy-btn" data-target="asm-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy template</button><span id="asm-text"><span class="ph-slot">TEAM CONTEXT — read this before responding:</span>
+
+<span class="ph-slot">### Layer 1 — How my team talks</span>
+- Product names: <span class="ph-placeholder">[e.g., WebMD ONE / TINYpulse / embody]</span>
+- We say "<span class="ph-tag">member</span>" not "user" / "patient"
+- We say "<span class="ph-tag">health coach</span>" not "clinician" / "therapist"
+- We say "<span class="ph-tag">HR program manager</span>" not "HR admin"
+- Our ticket system: <span class="ph-placeholder">[YouTrack / Jira / Linear]</span>
+- Our PRD home: <span class="ph-placeholder">[Confluence / YouTrack KB / Notion]</span>
+- Internal acronyms: <span class="ph-placeholder">[list 3-5 your team uses, e.g., "BAA = Business Associate Agreement"]</span>
+- Sprint cadence: <span class="ph-placeholder">[2-week sprints / weekly / continuous]</span>
+- Banned phrases: <span class="ph-placeholder">[e.g., never use "Oops!" in member-facing copy; never imply medical advice]</span>
+- Cross-language pairs (if applicable): <span class="ph-placeholder">[member = thành viên, etc.]</span>
+
+<span class="ph-slot">### Layer 2 — Our quality bar</span>
+- Definition of Done (paste your team's actual DoD checklist):
+  <span class="ph-placeholder">[- AC in G/W/T format
+   - 1 mockup link
+   - Compliance flag if PHI/PII touched
+   - Edge case list (empty / failure / permission)
+   - QA test plan]</span>
+- AC format we use: <span class="ph-placeholder">[Given / When / Then]</span>
+- PRD section order we follow: <span class="ph-placeholder">[Problem → Goals → Non-goals → User stories → AC → Edge cases → Open questions]</span>
+- Compliance flags we use: <span class="ph-tag">[COMPLIANCE — HIPAA]</span> / <span class="ph-tag">[COMPLIANCE — PDPL]</span> / <span class="ph-tag">[COMPLIANCE — SOC2]</span>
+- Always mark assumptions: <span class="ph-tag">[ASSUMPTION: ...]</span>
+- Always mark unknowns: <span class="ph-tag">[TBC: question for name/role]</span>
+- Tech lead auto-reject patterns: <span class="ph-placeholder">[list what your lead always rejects for]</span>
+
+<span class="ph-slot">### Layer 3 — One example of past good work</span>
+<span class="ph-tag">[EXAMPLE — for shape only, not for reuse]</span>
+
+<span class="ph-placeholder">[PASTE one of:
+ - 1 past PRD section that shipped clean
+ - 1 past YouTrack ticket your dev called "perfect handoff"
+ - 1 past research synthesis your PM thanked you for
+ - 1 past member-facing copy that passed brand review
+
+Sanitize: replace real member names with [Member A], real customer names with [Employer Co]. Keep the SHAPE intact. Trim to 1 page max.]</span>
+
+<span class="ph-slot">### Constraints (always apply)</span>
+- Never invent product names not listed above
+- Never invent regulations not in this context
+- Mark every assumption with <span class="ph-tag">[ASSUMPTION: ...]</span>
+- Mark every compliance touch with the appropriate flag
+- Use my team's vocabulary — never default to generic "user/patient/clinician"
+- If I ask for a PRD section, follow our PRD section order exactly
+- If I ask for tickets, match the shape of my example
+- If a fact is not in this context, mark <span class="ph-tag">[TBC]</span> instead of inventing</span></div>
+      <div class="prompt-hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Three places to use this: (1) paste as first message to Prompt Coach — Coach loads PERSONALIZE mode; (2) paste before any prompt in any Claude chat; (3) save as <code>team-context.md</code>, upload to a Claude Project — never paste again. The card grows with your team.
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ MAINTENANCE CALLOUT ============ -->
+  <div class="maint">
+    <div class="micon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    </div>
+    <div>
+      <h4>Maintenance — the card grows with your team</h4>
+      <p>A stale context card produces stale output. Schedule 15 minutes per quarter, plus event-driven updates:</p>
+      <ul>
+        <li>Update <b>quarterly</b> — every Q1/Q2/Q3/Q4 review week</li>
+        <li>Update when your <b>DoD changes</b> — new compliance requirement, new accessibility threshold, new flag taxonomy</li>
+        <li>Update when you ship a <b>new "best example"</b> — replace Layer 3 with the better artifact</li>
+        <li>Update when team <b>vocab shifts</b> — new product name, new role title, new banned phrase from brand review</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ SOURCES ============ -->
+  <div class="sources-block" id="sources">
+    <h3>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Key sources cited
+    </h3>
+    <ul>
+      <li><b>Few-shot prompting</b> — Brown et al. 2020, "Language Models are Few-Shot Learners" — <a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener">arxiv 2005.14165</a></li>
+      <li><b>In-context learning mechanics</b> — Min et al. 2022, "Rethinking the Role of Demonstrations" — <a href="https://arxiv.org/abs/2202.12837" target="_blank" rel="noopener">arxiv 2202.12837</a></li>
+      <li><b>BDD / Given-When-Then</b> — Dan North, "Introducing BDD" 2006 — <a href="https://dannorth.net/introducing-bdd/" target="_blank" rel="noopener">dannorth.net</a></li>
+      <li><b>Definition of Done</b> — Schwaber &amp; Sutherland, the Scrum Guide — <a href="https://scrumguides.org/scrum-guide.html" target="_blank" rel="noopener">scrumguides.org</a></li>
+      <li><b>LLM user-story / AC quality</b> — <a href="https://arxiv.org/html/2507.15157v1" target="_blank" rel="noopener">arxiv 2507.15157</a> (also cited in patterns reference)</li>
+      <li><b>Terminology management standard</b> — ISO 30042 (TBX) — <a href="https://www.iso.org/standard/45797.html" target="_blank" rel="noopener">iso.org/standard/45797</a></li>
+      <li><b>Structured authoring standard</b> — OASIS DITA — <a href="https://docs.oasis-open.org/dita/dita/v1.3/dita-v1.3-part0-overview.html" target="_blank" rel="noopener">docs.oasis-open.org</a></li>
+      <li><b>Inspection / review canon</b> — Fagan 1976 (IBM), DO-178C, IEC 62304 (cited in patterns reference for the Reviewer pattern)</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <span>Workshop · WebMD Health Services Vietnam · 04/05/2026</span>
+    <span>tony · vibery.app</span>
+  </div>
+</div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll(".pattern").forEach(pattern => {
+    const tabs = pattern.querySelectorAll(".tab");
+    const panels = pattern.querySelectorAll(".panel");
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.panel;
+        tabs.forEach(t => t.classList.remove("active"));
+        panels.forEach(p => p.classList.remove("active"));
+        tab.classList.add("active");
+        const panel = pattern.querySelector("#" + target);
+        if (panel) panel.classList.add("active");
+      });
+    });
+  });
+
+  // Copy buttons
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const targetId = btn.dataset.target;
+      const targetEl = document.getElementById(targetId);
+      if (!targetEl) return;
+      const text = targetEl.innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        const original = btn.innerHTML;
+        btn.classList.add("copied");
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Copied';
+        setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.innerHTML = original;
+        }, 1800);
+      } catch (e) {
+        btn.textContent = "(select + copy)";
+      }
+    });
+  });
+</script>
+</body>
+</html>

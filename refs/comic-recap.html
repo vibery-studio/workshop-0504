@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Today's session, in 9 frames — comic recap</title>
+<meta name="description" content="Comic recap of the AI Orchestration workshop for WebMD Health Services VN — 9 frames, 60 seconds. Read Monday morning when memory's fading." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --dark: #141413; --light: #faf9f5; --mid: #b0aea5; --light-gray: #e8e6dc;
+    --orange: #d97757; --blue: #6a9bcc; --green: #788c5d; --yellow: #d4a84b;
+    --font-head: "Be Vietnam Pro", system-ui, sans-serif;
+    --font-body: "Lora", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body); background: var(--light); color: var(--dark);
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+    padding: 56px 5vw 80px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+
+  /* ---------- header ---------- */
+  header { text-align: center; margin-bottom: 44px; }
+  .kicker {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 16px;
+  }
+  h1 {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: clamp(2rem, 5vw, 2.9rem);
+    line-height: 1.12; margin: 0 0 14px; letter-spacing: -0.02em;
+  }
+  h1 .mark { color: var(--orange); font-style: italic; font-family: var(--font-body); font-weight: 400; }
+  .sub {
+    font-family: var(--font-body); font-style: italic;
+    font-size: 1.05rem; opacity: 0.72; max-width: 640px; margin: 0 auto;
+  }
+  .meta {
+    font-family: var(--font-mono); font-size: 11px; opacity: 0.5;
+    margin-top: 12px;
+  }
+
+  /* ---------- comic grid ---------- */
+  .grid {
+    display: grid; gap: 22px;
+    grid-template-columns: 1fr;
+    margin-top: 8px;
+  }
+  @media (min-width: 600px) {
+    .grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+  }
+  @media (min-width: 920px) {
+    .grid { grid-template-columns: 1fr 1fr 1fr; gap: 26px; }
+  }
+
+  .panel {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(20,20,19,0.04), 0 8px 24px rgba(20,20,19,0.07);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    position: relative;
+  }
+  .panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(20,20,19,0.06), 0 14px 32px rgba(20,20,19,0.1);
+  }
+  .panel .num {
+    position: absolute; top: 10px; left: 12px;
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.1em; color: var(--orange);
+    background: rgba(255,255,255,0.92);
+    padding: 3px 7px; border-radius: 4px;
+    z-index: 2;
+  }
+  .panel .img-frame {
+    width: 100%; aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #f3efe4 0%, #ece7d9 100%);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .panel .img-frame::after {
+    /* shown when image fails or is missing */
+    content: "frame coming soon";
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--mid); letter-spacing: 0.08em;
+    position: absolute; opacity: 0.6;
+  }
+  .panel img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    position: relative; z-index: 1;
+  }
+  .panel .caption {
+    padding: 14px 18px 18px;
+    font-family: var(--font-body); font-style: italic;
+    font-size: 0.95rem; line-height: 1.5;
+    color: var(--dark);
+    border-top: 1px solid rgba(20,20,19,0.06);
+    background: #fff;
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    margin-top: 56px; text-align: center;
+    font-family: var(--font-body); font-style: italic;
+    font-size: 1rem; opacity: 0.65;
+    max-width: 580px; margin-left: auto; margin-right: auto;
+  }
+  footer .sig {
+    display: block; margin-top: 14px;
+    font-family: var(--font-mono); font-style: normal;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  /* ---------- print ---------- */
+  @media print {
+    body { padding: 18mm 12mm; background: #fff; }
+    header { margin-bottom: 18mm; }
+    h1 { font-size: 22pt; }
+    .sub { font-size: 11pt; }
+    .grid {
+      grid-template-columns: 1fr 1fr 1fr !important;
+      gap: 6mm !important;
+      page-break-inside: avoid;
+    }
+    .panel {
+      box-shadow: none;
+      border: 1px solid rgba(20,20,19,0.15);
+      page-break-inside: avoid;
+    }
+    .panel:hover { transform: none; box-shadow: none; }
+    .panel .caption { font-size: 9pt; padding: 8px 10px 10px; }
+    .panel .num { font-size: 8pt; }
+    footer { margin-top: 10mm; font-size: 10pt; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="kicker">Comic recap · 9 frames · 60 seconds</div>
+      <h1>Today's session, <span class="mark">in 9 frames.</span></h1>
+      <p class="sub">Comic recap of your AI Orchestration workshop · WebMD Health Services VN · 04/05/2026</p>
+      <div class="meta">Open Monday morning. The whole 3 hours, in one scroll.</div>
+    </header>
+
+    <section class="grid">
+      <figure class="panel">
+        <span class="num">01</span>
+        <div class="img-frame">
+          <img src="../images/comic-frame-01-frustrated.png" alt="Frustrated user. AI returned a paragraph instead of tickets." onerror="this.style.display='none'" />
+        </div>
+        <figcaption class="caption">Monday morning. AI gave me a paragraph about consent. I asked for tickets.</figcaption>
+      </figure>
+
+      <figure class="panel">
+        <span class="num">02</span>
+        <div class="img-frame">
+          <img src="../images/comic-frame-02-five-doors.png" alt="Five doors representing 5 surfaces with 5 verbs underneath." onerror="this.style.display='none'" />
+        </div>
+        <figcaption class="caption">Then I saw it. 5 surfaces. Same 5 verbs underneath.</figcaption>
+      </figure>
+
+      <figure class="panel">
+        <span class="num">03</span>
+        <div class="img-frame">
+          <img src="../images/comic-frame-03-rctco.png" alt="RCTCO turning a one-liner into a real prompt in 5 clicks." onerror="this.style.display='none'" />
+        </div>
+        <figcaption class="caption">5 clicks. Lucky 1-liner became a real prompt.</figcaption>
+      </figure>
+
+      <figure class="panel">
+        <span class="num">04</span>
+        <div class="img-frame">
+          <img src="../images/comic-frame-04-score-6.png" alt="Score of 6 out of 25 — personal trick, not yet a team asset." onerror="this.style.display='none'" />
+        </div>
+        <figcaption class="caption">6 out of 25. Personal trick. Not yet a team asset.</figcaption>
+      </figure>
+
+      <figure class="panel">
+        <span class="num">05</span>
+        <div class="img-frame">
+          <img src="../images/comic-frame-05-score-18.png" alt="Score of 18 — added Constraints and Output shape, ship-ready." onerror="this.style.display='none'" />
+        </div>
+        <figcaption class="caption">Add Constraints. Add Output shape. Score: 18. Ship-ready.</figcaption>
+      </figure>
+
+      <figure class="panel">
+        <span class="num">06</span>
+        <div class="img-frame">
+          <img src="../images/comic-frame-06-context-card.png" alt="Context card with team vocab, DoD, and one real example. Score 22+." onerror="this.style.display='none'" />
+        </div>
+        <figcaption class="caption">My team's vocab. My team's DoD. One real example. Score: 22+. Now it's MINE.</figcaption>
+      </figure>
+
+      <figure class="panel">
+        <span class="num">07</span>
+        <div class="img-frame">
+          <img src="../images/comic-frame-07-two-artifacts.png" alt="Two artifact files walked out with — keep forever." onerror="this.style.display='none'" />
+        </div>
+        <figcaption class="caption">Walked out with two files I'll use forever.</figcaption>
+      </figure>
+
+      <figure class="panel">
+        <span class="num">08</span>
+        <div class="img-frame">
+          <img src="../images/comic-frame-08-project.png" alt="Monday afternoon — pasted into a Project, score 22 again on a new task." onerror="this.style.display='none'" />
+        </div>
+        <figcaption class="caption">Monday afternoon. Pasted into a Project. Same prompt, new task. 22 again.</figcaption>
+      </figure>
+
+      <figure class="panel">
+        <span class="num">09</span>
+        <div class="img-frame">
+          <img src="../images/comic-frame-09-skill-autopilot.png" alt="Months later — Claude Code triggers the skill on keyword. Autopilot." onerror="this.style.display='none'" />
+        </div>
+        <figcaption class="caption">Months later. Claude Code triggers it on keyword. I never type it again.</figcaption>
+      </figure>
+    </section>
+
+    <footer>
+      Read this on Monday morning when memory's fading. The whole 3 hours, in 60 seconds.
+      <span class="sig">Workshop · WebMD Health Services VN · 04 / 05 / 2026</span>
+    </footer>
+  </div>
+</body>
+</html>

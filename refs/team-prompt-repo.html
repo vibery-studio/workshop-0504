@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Team prompt repository — practitioner reference</title>
+<meta name="description" content="Folder structure · PR template · semver versioning · eval tooling tiers. The plain-Git pattern for managing prompts as team assets. Workshop session 1." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --dark: #141413; --light: #faf9f5; --mid: #b0aea5; --light-gray: #e8e6dc;
+    --orange: #d97757; --blue: #6a9bcc; --green: #788c5d; --red: #c07a6e; --yellow: #d4a84b; --purple: #a07fb5;
+    --font-head: "Be Vietnam Pro", system-ui, sans-serif;
+    --font-body: "Lora", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body); background: var(--light); color: var(--dark);
+    line-height: 1.65; -webkit-font-smoothing: antialiased;
+    padding: 48px 5vw 64px;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; }
+
+  .kicker {
+    font-family: var(--font-head); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.06;
+    margin: 0 0 14px;
+  }
+  .lede {
+    font-family: var(--font-body); font-size: 1.15rem;
+    max-width: 760px; opacity: 0.9; margin: 0 0 12px;
+  }
+  .meta-bar {
+    font-family: var(--font-mono); font-size: 12px; opacity: 0.6;
+    margin-bottom: 32px;
+  }
+  .back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-head); font-size: 13px;
+    color: var(--dark); text-decoration: none;
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+  .back:hover { opacity: 1; color: var(--orange); }
+  .back svg { width: 14px; height: 14px; }
+
+  .toc {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 44px;
+    padding: 14px 18px;
+    background: rgba(250,249,245,0.92);
+    border: 1px solid var(--light-gray); border-radius: 12px;
+    position: sticky; top: 12px; z-index: 5;
+    backdrop-filter: blur(8px);
+  }
+  .toc-label {
+    font-family: var(--font-mono); font-size: 11px; opacity: 0.55;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    align-self: center; margin-right: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .toc-label svg { width: 13px; height: 13px; }
+  .toc a {
+    font-family: var(--font-head); font-size: 13px; font-weight: 600;
+    color: var(--dark); text-decoration: none;
+    padding: 5px 12px; border-radius: 16px;
+    border: 1px solid var(--light-gray);
+    transition: all 0.15s;
+  }
+  .toc a:hover { background: var(--orange); color: var(--light); border-color: var(--orange); }
+
+  .pattern {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-radius: 16px;
+    margin-bottom: 28px;
+    border-top: 4px solid var(--orange);
+    scroll-margin-top: 80px;
+    overflow: hidden;
+  }
+  .pattern[data-color="blue"] { border-top-color: var(--blue); }
+  .pattern[data-color="green"] { border-top-color: var(--green); }
+  .pattern[data-color="purple"] { border-top-color: var(--purple); }
+
+  .pattern-head {
+    padding: 32px 36px 22px;
+    display: flex; align-items: flex-start; gap: 18px;
+  }
+  .pattern-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(217,119,87,0.1);
+    color: var(--orange);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .pattern[data-color="blue"] .pattern-icon { background: rgba(106,155,204,0.12); color: var(--blue); }
+  .pattern[data-color="green"] .pattern-icon { background: rgba(120,140,93,0.12); color: var(--green); }
+  .pattern[data-color="purple"] .pattern-icon { background: rgba(160,127,181,0.12); color: var(--purple); }
+  .pattern-icon svg { width: 24px; height: 24px; }
+
+  .pattern-head .text { flex: 1; }
+  .pattern-name-row {
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .pattern-name {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 1.65rem; letter-spacing: -0.02em;
+  }
+  .pattern-tag {
+    font-family: var(--font-mono); font-size: 11px;
+    background: var(--light-gray); padding: 4px 10px; border-radius: 12px;
+    color: var(--dark); opacity: 0.7;
+    letter-spacing: 0.06em;
+  }
+  .pattern-what {
+    font-family: var(--font-body); font-size: 1rem;
+    opacity: 0.85; margin: 0;
+  }
+
+  .tabs {
+    display: flex; gap: 0;
+    padding: 0 36px;
+    border-bottom: 1px solid var(--light-gray);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    background: none; border: none;
+    padding: 14px 18px;
+    font-family: var(--font-head); font-weight: 600; font-size: 13.5px;
+    color: var(--dark); opacity: 0.55;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    display: inline-flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+    transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .tab svg { width: 15px; height: 15px; }
+  .tab:hover { opacity: 0.85; }
+  .tab.active {
+    opacity: 1;
+    color: var(--orange);
+    border-bottom-color: var(--orange);
+  }
+  .pattern[data-color="blue"] .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .pattern[data-color="green"] .tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .pattern[data-color="purple"] .tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+  .tab-panels { padding: 28px 36px 32px; }
+  .panel { display: none; animation: fade-in 0.25s ease; }
+  .panel.active { display: block; }
+  @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .usage-note {
+    background: rgba(106,155,204,0.08);
+    border-left: 3px solid var(--blue);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    font-family: var(--font-body); font-size: 13.5px; line-height: 1.55;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .usage-note svg { width: 18px; height: 18px; color: var(--blue); flex-shrink: 0; margin-top: 1px; }
+  .usage-note b { font-family: var(--font-head); font-weight: 600; }
+  .usage-note code {
+    background: rgba(106,155,204,0.15); padding: 1px 5px; border-radius: 3px;
+    font-size: 12px; color: var(--dark);
+  }
+
+  .prompt-block {
+    background: #0d0d0c; color: #e8e6dc;
+    border-radius: 12px; padding: 22px 24px 18px;
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.65;
+    position: relative;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+  }
+  .prompt-block .ph-slot { color: var(--orange); font-weight: 600; }
+  .prompt-block .ph-tag {
+    background: rgba(217,119,87,0.18); color: var(--orange);
+    padding: 1px 6px; border-radius: 4px; font-size: 12px;
+  }
+  .copy-btn {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(255,255,255,0.08);
+    color: var(--light);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 6px 12px; border-radius: 18px;
+    font-family: var(--font-head); font-size: 12px; font-weight: 500;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--orange); border-color: var(--orange); }
+  .copy-btn.copied { background: var(--green); border-color: var(--green); }
+  .copy-btn svg { width: 13px; height: 13px; }
+
+  .prompt-hint {
+    margin-top: 14px;
+    font-family: var(--font-body); font-size: 13.5px; opacity: 0.75;
+    line-height: 1.55;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .prompt-hint svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--orange); }
+
+  /* Tree view */
+  .tree {
+    background: #0d0d0c; color: #e8e6dc;
+    border-radius: 12px; padding: 22px 24px;
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre;
+    position: relative;
+  }
+  .tree .anno { color: var(--mid); font-style: italic; }
+  .tree .folder { color: var(--orange); font-weight: 600; }
+  .tree .file { color: #e8e6dc; }
+  .tree .keyfile { color: var(--yellow); }
+
+  /* reason cards (used in "Why this shape", "The 4 questions") */
+  .reasons { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .reasons li {
+    padding: 16px 18px;
+    background: rgba(250,249,245,0.6);
+    border: 1px solid var(--light-gray);
+    border-left: 3px solid var(--orange);
+    border-radius: 8px;
+  }
+  .pattern[data-color="blue"] .reasons li { border-left-color: var(--blue); }
+  .pattern[data-color="green"] .reasons li { border-left-color: var(--green); }
+  .pattern[data-color="purple"] .reasons li { border-left-color: var(--purple); }
+  .reasons .rname {
+    font-family: var(--font-head); font-weight: 600; font-size: 14.5px;
+    display: block; margin-bottom: 4px;
+  }
+  .reasons .rbody { font-size: 14px; opacity: 0.85; }
+  .reasons code {
+    background: var(--light-gray); padding: 1px 5px; border-radius: 3px;
+    font-family: var(--font-mono); font-size: 12px;
+  }
+
+  /* tier card grid (eval section) */
+  .tiers { display: grid; gap: 0; }
+  .tier {
+    padding: 18px 20px;
+    border: 1px solid var(--light-gray);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    background: #fff;
+  }
+  .tier .thead {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+    flex-wrap: wrap; margin-bottom: 8px;
+  }
+  .tier .tname {
+    font-family: var(--font-head); font-weight: 700; font-size: 1.05rem;
+  }
+  .tier .tcost {
+    font-family: var(--font-mono); font-size: 12px;
+    background: var(--light-gray); padding: 3px 9px; border-radius: 12px;
+    opacity: 0.85;
+  }
+  .tier .twhen {
+    font-family: var(--font-body); font-size: 13.5px; opacity: 0.85;
+    margin: 6px 0 10px;
+  }
+  .tier .twhen b { font-family: var(--font-head); font-weight: 600; }
+  .tier .tlook {
+    font-family: var(--font-body); font-size: 13.5px;
+    background: rgba(120,140,93,0.06);
+    border-left: 2px solid var(--green);
+    padding: 10px 14px; border-radius: 6px; margin: 8px 0;
+  }
+  .tier .tlook code { font-family: var(--font-mono); font-size: 12px; background: var(--light-gray); padding: 1px 5px; border-radius: 3px; }
+  .tier a { color: var(--orange); text-decoration: none; border-bottom: 1px dotted var(--orange); }
+  .tier a:hover { color: var(--dark); }
+  .tier.t-manual { border-left: 4px solid var(--green); }
+  .tier.t-oss { border-left: 4px solid var(--blue); }
+  .tier.t-obs { border-left: 4px solid var(--purple); }
+  .tier.t-saas { border-left: 4px solid var(--yellow); }
+
+  .pullquote {
+    margin: 16px 0 4px;
+    padding: 14px 18px;
+    border-left: 3px solid var(--orange);
+    background: rgba(217,119,87,0.06);
+    font-family: var(--font-body); font-style: italic; font-size: 14px;
+    border-radius: 6px;
+  }
+  .pullquote cite { display: block; margin-top: 6px; font-style: normal; font-family: var(--font-mono); font-size: 11px; opacity: 0.7; }
+
+  .sources-block {
+    background: #fff; border: 1px solid var(--light-gray); border-radius: 14px;
+    padding: 24px 28px; margin-top: 28px;
+  }
+  .sources-block h3 {
+    font-family: var(--font-head); font-weight: 600; font-size: 1.1rem;
+    margin: 0 0 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sources-block h3 svg { width: 18px; height: 18px; color: var(--orange); }
+  .sources-block ul { list-style: none; padding: 0; margin: 0; }
+  .sources-block li {
+    font-family: var(--font-mono); font-size: 12px; line-height: 1.55;
+    padding: 6px 0; opacity: 0.85;
+  }
+  .sources-block a { color: var(--orange); text-decoration: none; }
+  .sources-block a:hover { text-decoration: underline; }
+
+  .footer {
+    margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--light-gray);
+    font-family: var(--font-mono); font-size: 12px; opacity: 0.6;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+
+  @media (max-width: 720px) {
+    .pattern-head, .tabs, .tab-panels { padding-left: 22px; padding-right: 22px; }
+    .toc { position: static; }
+    .tab { padding: 12px 14px; font-size: 13px; }
+  }
+  @media print {
+    body { padding: 24px; }
+    .pattern { page-break-inside: avoid; box-shadow: none; }
+    .toc, .copy-btn { display: none; }
+    .tabs { display: none; }
+    .panel { display: block !important; }
+    .panel:not(:first-child) { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--light-gray); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../slides.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    back to slides
+  </a>
+  <div class="kicker">Workshop reference · session 1 · "Where good prompts live" deep-dive</div>
+  <h1>Team prompt repository</h1>
+  <p class="lede">The plain-Git pattern for managing prompts as team assets. Folder convention, PR template, semver per prompt, eval tooling tiers. <b>Plain-Git first. SaaS only when you outgrow markdown.</b></p>
+  <div class="meta-bar">Sources cited inline. Last updated 2026-05-02 · WebMD HS workshop · author: Tony Bùi</div>
+
+  <div class="toc">
+    <span class="toc-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      jump:
+    </span>
+    <a href="#folder">Folder structure</a>
+    <a href="#pr">PR template</a>
+    <a href="#versioning">Versioning</a>
+    <a href="#eval">Eval tooling</a>
+    <a href="#sources">Sources</a>
+  </div>
+
+  <!-- ============ FOLDER STRUCTURE ============ -->
+  <article class="pattern" id="folder">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- folder-tree -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2.5a1 1 0 0 1-.8-.4l-.9-1.2A1 1 0 0 0 15 3h-2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M20 21a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-2.9a1 1 0 0 1-.88-.55l-.42-.85a1 1 0 0 0-.92-.6H13a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M3 5a2 2 0 0 0 2 2h3"/><path d="M3 3v13a2 2 0 0 0 2 2h3"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Folder structure</div>
+          <span class="pattern-tag">subfolder per pattern</span>
+        </div>
+        <p class="pattern-what">One subfolder per pattern (not per task). Prompt + examples + eval grouped together. README at the top defines conventions.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="fold-tree"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/></svg>Tree view</button>
+      <button class="tab" data-panel="fold-why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Why this shape</button>
+      <button class="tab" data-panel="fold-naming"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>Naming rules</button>
+    </div>
+
+    <div class="tab-panels">
+      <div class="panel active" id="fold-tree">
+        <div class="usage-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span><b>How to use:</b> create <code>prompts/</code> at the root of your team's repo (or a dedicated <code>your-team-prompts</code> repo). One subfolder per pattern (reviewer / synthesizer / translator …). Strict file names so tooling and humans agree.</span>
+        </div>
+<div class="tree"><span class="folder">prompts/</span>
+├── <span class="keyfile">README.md</span>                    <span class="anno">← index + conventions</span>
+├── <span class="keyfile">_conventions.md</span>              <span class="anno">← schema, versioning, PR rules</span>
+├── <span class="folder">reviewer/</span>
+│   ├── <span class="keyfile">prompt.md</span>                <span class="anno">← the master prompt</span>
+│   ├── <span class="keyfile">CHANGELOG.md</span>             <span class="anno">← human-readable history</span>
+│   ├── <span class="folder">examples/</span>                 <span class="anno">← input/output pairs</span>
+│   │   ├── <span class="file">01-prd-section.md</span>
+│   │   └── <span class="file">02-spec-review.md</span>
+│   └── <span class="keyfile">eval.yaml</span>                <span class="anno">← Promptfoo regression tests</span>
+├── <span class="folder">synthesizer/</span>
+│   └── <span class="anno">... (same structure)</span>
+└── <span class="folder">translator/</span>
+    └── <span class="anno">... (same structure)</span></div>
+        <p class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Synthesized from <a href="https://github.com/promptfoo/promptfoo/tree/main/examples" target="_blank" rel="noopener">Promptfoo's examples/ directory</a> + <a href="https://apxml.com/courses/prompt-engineering-llm-application-development/chapter-3-prompt-design-iteration-evaluation/version-control-for-prompts" target="_blank" rel="noopener">apxml's version-control guidance</a>. The senior-team adaptation: subfolder per pattern, prompt+examples+eval grouped together.
+        </p>
+      </div>
+
+      <div class="panel" id="fold-why">
+        <ul class="reasons">
+          <li>
+            <span class="rname">Subfolder per pattern, not per task</span>
+            <span class="rbody"><code>reviewer/</code> is reusable across PRDs, specs, briefs. <code>member-consent-prd-review/</code> is a one-shot. Patterns compound; tasks don't.</span>
+          </li>
+          <li>
+            <span class="rname">Prompt + examples + eval grouped</span>
+            <span class="rbody">When you change <code>prompt.md</code>, the diff sits next to its eval cases. PR reviewers can see "did the regression coverage update?" in one glance.</span>
+          </li>
+          <li>
+            <span class="rname">README at the top is the index</span>
+            <span class="rbody">First file a new teammate opens. Lists every pattern, last-updated date, owner. Without it, the repo becomes a graveyard within 6 months.</span>
+          </li>
+          <li>
+            <span class="rname">_conventions.md captures the rules once</span>
+            <span class="rbody">Schema for <code>prompt.md</code> frontmatter, semver rules, PR review template. Underscore prefix sorts it near the top alongside README.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel" id="fold-naming">
+        <ul class="reasons">
+          <li>
+            <span class="rname">Lowercase, hyphenated folders</span>
+            <span class="rbody"><code>reviewer/</code> not <code>Reviewer/</code>. <code>synthesizer/</code> not <code>Synthesizer_v2/</code>. Cross-platform safe, grep-friendly.</span>
+          </li>
+          <li>
+            <span class="rname">Domain-named, not project-named</span>
+            <span class="rbody"><code>reviewer/</code> is the pattern. <code>member-consent-prd/</code> is the use case. Patterns are reusable; use cases are not. Name folders after patterns.</span>
+          </li>
+          <li>
+            <span class="rname">Strict file names — don't bikeshed</span>
+            <span class="rbody"><code>prompt.md</code>, <code>eval.yaml</code>, <code>CHANGELOG.md</code>, <code>examples/</code>. So Promptfoo can find <code>eval.yaml</code> automatically. So a script can grep every <code>prompt.md</code> across the repo. Naming is infrastructure.</span>
+          </li>
+          <li>
+            <span class="rname">Underscore-prefix for meta files</span>
+            <span class="rbody"><code>_conventions.md</code>, <code>_glossary.md</code>. Sorts above pattern folders. Signals "read me before patterns."</span>
+          </li>
+        </ul>
+        <p class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Per <a href="https://github.com/kriasoft/Folder-Structure-Conventions" target="_blank" rel="noopener">kriasoft/Folder-Structure-Conventions</a>: naming is a contract with tooling. Break it once and grep stops working.
+        </p>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ PR TEMPLATE ============ -->
+  <article class="pattern" id="pr" data-color="blue">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- git-pull-request -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">PR review template</div>
+          <span class="pattern-tag">4 questions every prompt PR must answer</span>
+        </div>
+        <p class="pattern-what">No PR without naming the failure mode. No merge without eval coverage. No major version without explicit schema-change call-out.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="pr-q"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>The 4 questions</button>
+      <button class="tab" data-panel="pr-tpl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy template</button>
+      <button class="tab" data-panel="pr-ex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Example PR</button>
+    </div>
+
+    <div class="tab-panels">
+      <div class="panel active" id="pr-q">
+        <ul class="reasons">
+          <li>
+            <span class="rname">1. What failure mode does this defend?</span>
+            <span class="rbody">No PR without naming the bug. Forces the author to cite either an incident or a research source — e.g. "sycophantic plan-validation, <a href="https://arxiv.org/abs/2411.15287" target="_blank" rel="noopener">arxiv 2411.15287</a>."</span>
+          </li>
+          <li>
+            <span class="rname">2. Eval cases added/updated?</span>
+            <span class="rbody">Regression coverage for the change. If you can't write a failing test before the fix, you don't understand the failure. Promptfoo's CI integration runs <code>eval.yaml</code> on every PR — failed evals block merge.</span>
+          </li>
+          <li>
+            <span class="rname">3. Output schema changed?</span>
+            <span class="rbody">Forces the semver decision. Schema change = major bump (v1.x → v2.0). New constraint, same schema = minor (v1.1.0 → v1.2.0). Wording fix only = patch (v1.2.0 → v1.2.1).</span>
+          </li>
+          <li>
+            <span class="rname">4. Tested against last 3 model versions?</span>
+            <span class="rbody">Prompts break silently when models update. A prompt that passes on Claude 4.5 may fail on 4.7. The eval suite must run against your live model set, not just one.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel" id="pr-tpl">
+        <div class="usage-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span><b>How to use:</b> save as <code>.github/PULL_REQUEST_TEMPLATE/prompt-change.md</code> in your repo. GitHub auto-fills it on every PR opened against the <code>prompts/</code> path.</span>
+        </div>
+        <div class="prompt-block"><button class="copy-btn" data-target="pr-tpl-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button><span id="pr-tpl-text">## What failure mode does this defend?
+[Name the specific bug or research source — e.g. "Sycophantic plan-validation, arxiv 2411.15287"]
+
+## Eval cases added/updated?
+- [ ] Added regression case to `eval.yaml`
+- [ ] Tested against Claude 4.7, GPT-4.5, Gemini 2.5
+
+## Output schema changed?
+- [ ] No — minor version bump
+- [ ] Yes — major version bump (v1.x → v2.0)
+
+## Tested against last 3 model versions?
+- Claude: ✓
+- GPT: ✓
+- Gemini: ✓
+
+## CHANGELOG entry written?
+- [ ] yes</span></div>
+      </div>
+
+      <div class="panel" id="pr-ex">
+        <div class="usage-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span><b>What a good PR looks like</b> — fictional but realistic. PR title: <code>reviewer: add PDPL constraint (v1.1.0 → v1.2.0)</code></span>
+        </div>
+        <div class="prompt-block"><span id="pr-ex-text">## What failure mode does this defend?
+Reviewer was missing PDPL (VN data privacy) compliance flags on member-data
+sections. Caught in QA on PRD-2026-04 — reviewer cleared a section that
+included raw <span class="ph-tag">[member health condition]</span> in an analytics export.
+Source: internal incident QA-0429 + PDPL Article 13.
+
+## Eval cases added/updated?
+- [x] Added 3 PDPL test cases to `reviewer/eval.yaml`
+  - prd-section-with-raw-condition (must flag)
+  - prd-section-with-anonymized-condition (must pass)
+  - prd-section-cross-border-transfer (must flag)
+- [x] Tested against Claude 4.7, GPT-4.5, Gemini 2.5 — all pass
+
+## Output schema changed?
+- [x] No — minor version bump (v1.1.0 → v1.2.0)
+  - Same defect-table columns. New <span class="ph-tag">[COMPLIANCE — PDPL]</span> tag added
+    inside existing "Compliance flags" section.
+
+## Tested against last 3 model versions?
+- Claude 4.7: ✓
+- GPT-4.5: ✓
+- Gemini 2.5: ✓
+
+## CHANGELOG entry written?
+- [x] yes — see `reviewer/CHANGELOG.md` v1.2.0</span></div>
+        <p class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          The "Source: internal incident QA-0429" line is the audit trail. Two years from now, when someone asks "why does the reviewer flag PDPL?", the answer is one git-blame away.
+        </p>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ VERSIONING ============ -->
+  <article class="pattern" id="versioning" data-color="green">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- tag -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Versioning</div>
+          <span class="pattern-tag">semver per prompt · date-tags lose</span>
+        </div>
+        <p class="pattern-what">Each prompt carries its own semver. Major = breaking output schema. Minor = new constraint. Patch = wording fix. Tag the whole repo at deployment milestones.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="ver-semver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Semver per prompt</button>
+      <button class="tab" data-panel="ver-cl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>CHANGELOG example</button>
+      <button class="tab" data-panel="ver-repo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>Repo-level tags</button>
+    </div>
+
+    <div class="tab-panels">
+      <div class="panel active" id="ver-semver">
+        <ul class="reasons">
+          <li>
+            <span class="rname">MAJOR — breaking output schema</span>
+            <span class="rbody"><code>v1.x.x → v2.0.0</code>. The defect-table grew a column. The output is now JSON, was markdown. Anything downstream that parses the output may break. Forces consumer review.</span>
+          </li>
+          <li>
+            <span class="rname">MINOR — new constraint or capability</span>
+            <span class="rbody"><code>v1.1.0 → v1.2.0</code>. Added "<span class="rbody"><code>[COMPLIANCE — PDPL]</code></span> tag for VN data handling." Same schema, more rules. Backward-compatible — old consumers still work.</span>
+          </li>
+          <li>
+            <span class="rname">PATCH — wording fix only</span>
+            <span class="rbody"><code>v1.2.0 → v1.2.1</code>. Typo. Clarified "must" vs "should." No behavioral change expected. Eval suite must still pass — that's the proof.</span>
+          </li>
+          <li>
+            <span class="rname">Date-only tags lose information</span>
+            <span class="rbody"><code>2026-05-04</code> tells you when, not what. Was that a typo fix or a schema rewrite? Semver makes the breaking-vs-non-breaking call explicit at tag time, not git-archeology time.</span>
+          </li>
+        </ul>
+        <div class="pullquote">
+          "Associating commit hashes with evaluation results lets you definitively link specific prompt versions to observed performance metrics."
+          <cite>— apxml, Version Control for Prompts</cite>
+        </div>
+      </div>
+
+      <div class="panel" id="ver-cl">
+        <div class="usage-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span><b>One CHANGELOG.md per prompt</b>, sitting next to <code>prompt.md</code>. The "Defends:" line connecting changes to research/incident sources is the audit trail regulators want.</span>
+        </div>
+        <div class="prompt-block"><button class="copy-btn" data-target="ver-cl-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button><span id="ver-cl-text"># reviewer/CHANGELOG.md
+
+## v1.2.0 — 2026-05-15
+- Added [COMPLIANCE — PDPL] tag for VN data handling
+- Eval: added 3 PDPL test cases
+- Defends: internal QA-0429 + PDPL Article 13
+
+## v1.1.0 — 2026-05-04
+- Added "adversarial posture" rule to defend sycophancy
+- Defends: arxiv 2411.15287
+
+## v1.0.0 — 2026-05-04
+- Initial — workshop kickoff</span></div>
+      </div>
+
+      <div class="panel" id="ver-repo">
+        <ul class="reasons">
+          <li>
+            <span class="rname">Per-prompt semver in <code>prompt.md</code> frontmatter</span>
+            <span class="rbody">Each prompt carries its own version, independent of the repo. Reviewer at v1.2.0 while Synthesizer is at v3.0.1 — no problem.</span>
+          </li>
+          <li>
+            <span class="rname">Repo-level tag at deployment milestones</span>
+            <span class="rbody">Tag the whole repo when you ship a Project to a customer or update production: <code>git tag v2026.05.04-webmd</code>. Captures the snapshot every prompt was at on that day.</span>
+          </li>
+          <li>
+            <span class="rname">Two coordinates: who-and-when (repo tag) + what-and-why (per-prompt semver)</span>
+            <span class="rbody">Six months later, you can answer both "what was running for WebMD on 2026-05-04?" (checkout the repo tag) and "what changed in reviewer between v1.1 and v1.2?" (read the per-prompt CHANGELOG).</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ EVAL TOOLING ============ -->
+  <article class="pattern" id="eval" data-color="purple">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- flask-conical -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Eval &amp; tooling tiers</div>
+          <span class="pattern-tag">3 tiers · adopt on team-size signals</span>
+        </div>
+        <p class="pattern-what">Start with markdown checklists. Graduate to Promptfoo when you hit ~10 prompts. Add observability or SaaS only when production traffic / non-engineer iteration forces it.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="ev-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tier 1: Manual</button>
+      <button class="tab" data-panel="ev-2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Tier 2: Promptfoo</button>
+      <button class="tab" data-panel="ev-3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Tier 3: SaaS</button>
+    </div>
+
+    <div class="tab-panels">
+      <div class="panel active" id="ev-1">
+        <div class="tier t-manual">
+          <div class="thead">
+            <span class="tname">Markdown checklist + human review</span>
+            <span class="tcost">$0 · plain-Git only</span>
+          </div>
+          <p class="twhen"><b>Adopt when:</b> &lt;10 prompts, &lt;3 reviewers, no production traffic yet. This is where you start. This is also where most teams should stay longer than they think.</p>
+          <p class="tlook"><b>What it looks like:</b> <code>reviewer/eval.md</code> with 5–10 numbered "test cases" — each a snippet of input + the expected behavior in prose. Human runs them by eye on every PR. The PR template's "eval cases added/updated?" checkbox enforces it.</p>
+        </div>
+        <div class="pullquote">
+          "Plain-Git is durable. SaaS comes when you outgrow markdown. Start where your team already is."
+          <cite>— workshop heuristic, source: research synthesis</cite>
+        </div>
+      </div>
+
+      <div class="panel" id="ev-2">
+        <div class="tier t-oss">
+          <div class="thead">
+            <span class="tname">Promptfoo — YAML eval, CI-ready</span>
+            <span class="tcost">$0 · open-source</span>
+          </div>
+          <p class="twhen"><b>Adopt when:</b> 10–50 prompts, you want automated regression on every PR, you have at least one engineer comfortable with YAML and GitHub Actions.</p>
+          <p class="tlook"><b>What it looks like:</b> <code>eval.yaml</code> per pattern. CI runs <code>promptfoo eval</code> on every PR — failed assertions block merge. Free, self-hosted, no vendor lock-in. The de-facto OSS standard. <a href="https://www.promptfoo.dev/" target="_blank" rel="noopener">promptfoo.dev</a></p>
+        </div>
+        <div class="tier t-obs">
+          <div class="thead">
+            <span class="tname">Langfuse — observability layer above Promptfoo</span>
+            <span class="tcost">self-host or SaaS</span>
+          </div>
+          <p class="twhen"><b>Adopt when:</b> production traffic is live, you need to A/B test prompt versions against real users, you want tracing across multi-step chains.</p>
+          <p class="tlook"><b>What it looks like:</b> Langfuse ingests Promptfoo eval results + production traces. Dashboards show "v1.1 vs v1.2 latency / cost / quality." Self-hostable — hedges SaaS lock-in. <a href="https://langfuse.com/integrations/other/promptfoo" target="_blank" rel="noopener">langfuse.com</a></p>
+        </div>
+      </div>
+
+      <div class="panel" id="ev-3">
+        <div class="tier t-saas">
+          <div class="thead">
+            <span class="tname">PromptLayer — visual editor + versions for non-engineers</span>
+            <span class="tcost">$$$ · SaaS</span>
+          </div>
+          <p class="twhen"><b>Adopt when:</b> PMs / copywriters / domain experts need to iterate on prompts without git, and you've already outgrown markdown. Not before.</p>
+          <p class="tlook"><b>What it looks like:</b> prompts live in PromptLayer's DB (not your repo). Web UI for editing + version diff + test runs. Engineers fetch via API at runtime. Trade-off: pace up, sovereignty down. <a href="https://promptlayer.com/" target="_blank" rel="noopener">promptlayer.com</a></p>
+        </div>
+        <div class="pullquote">
+          "PromptLayer excels at getting prompts out of your application's code and into a centralized, governed registry where they can be versioned, tested, and safely deployed."
+          <cite>— Nearform, Prompt Management Systems Compared</cite>
+        </div>
+        <div class="pullquote">
+          <b>Caveat — tooling churn is high.</b> PromptLayer / Langfuse / Helicone / Maxim all launched 2023–2024. Some won't exist in 2027. Plain-Git is the only durable substrate. SaaS-managed prompts don't live in your repo — fine for pace, bad for sovereignty. Hedge with self-hostable Langfuse if you need a UI layer.
+          <cite>— research synthesis, 2026-05-02</cite>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ SOURCES ============ -->
+  <div class="sources-block" id="sources">
+    <h3>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Key sources cited
+    </h3>
+    <ul>
+      <li><b>Folder structure pattern</b> — <a href="https://github.com/promptfoo/promptfoo/tree/main/examples" target="_blank" rel="noopener">PromptFoo examples directory (github)</a></li>
+      <li><b>Numbered learning sequence (alt pattern)</b> — <a href="https://github.com/anthropics/prompt-eng-interactive-tutorial" target="_blank" rel="noopener">Anthropic prompt-eng-interactive-tutorial (github)</a></li>
+      <li><b>Naming conventions</b> — <a href="https://github.com/kriasoft/Folder-Structure-Conventions" target="_blank" rel="noopener">kriasoft/Folder-Structure-Conventions (github)</a></li>
+      <li><b>Versioning + commit-hash &harr; eval-result linkage</b> — <a href="https://apxml.com/courses/prompt-engineering-llm-application-development/chapter-3-prompt-design-iteration-evaluation/version-control-for-prompts" target="_blank" rel="noopener">apxml · Version Control for Prompts</a></li>
+      <li><b>Tooling landscape comparison</b> — <a href="https://www.getmaxim.ai/articles/top-5-prompt-management-platforms-in-2025-a-comprehensive-guide-for-ai-teams/" target="_blank" rel="noopener">Top 5 Prompt Management Platforms 2025 (getmaxim)</a> · <a href="https://www.getmaxim.ai/articles/top-5-prompt-versioning-tools-for-enterprise-ai-teams-in-2026/" target="_blank" rel="noopener">Top Prompt Versioning Tools 2026 (getmaxim)</a></li>
+      <li><b>Prompt management systems compared</b> — <a href="https://nearform.com/digital-community/prompt-management-systems-compared/" target="_blank" rel="noopener">Nearform digital community</a></li>
+      <li><b>Promptfoo + Langfuse integration</b> — <a href="https://langfuse.com/integrations/other/promptfoo" target="_blank" rel="noopener">Langfuse docs</a></li>
+      <li><b>Sycophancy (informs PR template's "failure mode" question)</b> — <a href="https://arxiv.org/abs/2411.15287" target="_blank" rel="noopener">arxiv 2411.15287</a></li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <span>Workshop · WebMD Health Services Vietnam · 04/05/2026</span>
+    <span>tony · vibery.app</span>
+  </div>
+</div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll(".pattern").forEach(pattern => {
+    const tabs = pattern.querySelectorAll(".tab");
+    const panels = pattern.querySelectorAll(".panel");
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.panel;
+        tabs.forEach(t => t.classList.remove("active"));
+        panels.forEach(p => p.classList.remove("active"));
+        tab.classList.add("active");
+        const panel = pattern.querySelector("#" + target);
+        if (panel) panel.classList.add("active");
+      });
+    });
+  });
+
+  // Copy buttons
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const targetId = btn.dataset.target;
+      const targetEl = document.getElementById(targetId);
+      if (!targetEl) return;
+      const text = targetEl.innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        const original = btn.innerHTML;
+        btn.classList.add("copied");
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Copied';
+        setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.innerHTML = original;
+        }, 1800);
+      } catch (e) {
+        btn.textContent = "(select + copy)";
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Prompt Coach — install your assistant</title>
+<meta name="description" content="Pick your install path: Skill (Pro+), Project (any plan), or paste-block fallback. Workshop assistant for WebMD HS · 04/05/2026." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --dark: #141413; --light: #faf9f5; --mid: #b0aea5; --light-gray: #e8e6dc;
+    --orange: #d97757; --blue: #6a9bcc; --green: #788c5d; --red: #c07a6e; --yellow: #d4a84b;
+    --font-head: "Be Vietnam Pro", system-ui, sans-serif;
+    --font-body: "Lora", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body); background: var(--light); color: var(--dark);
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+    min-height: 100vh; padding: 48px 5vw;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  .kicker {
+    font-family: var(--font-head); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: clamp(2rem, 4.5vw, 3.4rem); letter-spacing: -0.03em; line-height: 1.06;
+    margin: 0 0 16px;
+  }
+  .lede {
+    font-family: var(--font-body); font-size: 1.18rem;
+    max-width: 760px; opacity: 0.88; margin: 0 0 36px;
+  }
+  .tiers {
+    display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 18px;
+    margin-bottom: 40px;
+  }
+  .tier {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-radius: 16px; padding: 28px 26px 24px;
+    display: flex; flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .tier:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(20,20,19,0.08); }
+  .tier.recommended { border-top: 4px solid var(--orange); }
+  .tier.intermediate { border-top: 4px solid var(--blue); }
+  .tier.fallback { border-top: 4px solid var(--mid); }
+  .badge {
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 12px; align-self: flex-start;
+    background: var(--light-gray); color: var(--dark); margin-bottom: 14px;
+  }
+  .tier.recommended .badge { background: rgba(217,119,87,0.15); color: var(--orange); }
+  .tier.intermediate .badge { background: rgba(106,155,204,0.15); color: var(--blue); }
+  .tier.fallback .badge { background: rgba(176,174,165,0.25); color: #6e6c64; }
+  .tier h2 {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 1.6rem; margin: 0 0 8px; letter-spacing: -0.02em;
+  }
+  .tier .req {
+    font-family: var(--font-mono); font-size: 11.5px;
+    color: var(--mid); margin-bottom: 14px; letter-spacing: 0.02em;
+  }
+  .tier .desc {
+    font-family: var(--font-body); font-size: 14.5px; line-height: 1.55;
+    opacity: 0.88; margin: 0 0 18px;
+  }
+  .tier .steps {
+    list-style: none; padding: 0; margin: 0 0 22px;
+    font-family: var(--font-head); font-size: 13.5px; line-height: 1.5;
+  }
+  .tier .steps li {
+    padding: 6px 0 6px 22px; position: relative;
+  }
+  .tier .steps li::before {
+    content: counter(step) ".";
+    counter-increment: step;
+    position: absolute; left: 0; color: var(--orange);
+    font-family: var(--font-mono); font-weight: 600; font-size: 12.5px;
+  }
+  .tier .steps { counter-reset: step; }
+  .tier .cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--dark); color: var(--light);
+    padding: 12px 22px; border-radius: 24px;
+    font-family: var(--font-head); font-weight: 600; font-size: 14px;
+    text-decoration: none; transition: all 0.15s;
+    margin-top: auto; align-self: flex-start;
+  }
+  .tier .cta:hover { background: var(--orange); transform: scale(1.04); }
+  .tier.recommended .cta { background: var(--orange); }
+  .tier.recommended .cta:hover { background: var(--dark); }
+  .tier .cta svg { width: 14px; height: 14px; }
+  .tier .alt-link {
+    font-family: var(--font-mono); font-size: 11.5px;
+    margin-top: 10px; opacity: 0.6;
+  }
+  .tier .alt-link a { color: var(--dark); text-decoration: underline; }
+
+  .help {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-radius: 14px; padding: 22px 26px;
+  }
+  .help .body { font-family: var(--font-body); font-size: 14.5px; line-height: 1.5; }
+  .help .body b { font-family: var(--font-head); }
+  .help .body code {
+    background: var(--light-gray); padding: 1px 6px; border-radius: 4px;
+    font-family: var(--font-mono); font-size: 0.9em;
+  }
+
+  .footer {
+    margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--light-gray);
+    font-family: var(--font-mono); font-size: 12px; opacity: 0.65;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+
+  @media (max-width: 880px) {
+    .tiers { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">Workshop · WebMD Health Services VN · 04/05/2026</div>
+  <h1>Open your Prompt Coach</h1>
+  <p class="lede">Three install paths. Pick the one that fits your Claude account. Coach is your workshop assistant for the next 3 hours — and yours forever after.</p>
+
+  <div class="tiers">
+
+    <!-- TIER 1 — SKILL -->
+    <div class="tier recommended">
+      <div class="badge">Recommended · 60 sec</div>
+      <h2>1 · Install as Skill</h2>
+      <div class="req">Needs: Claude Pro / Max / Team / Enterprise</div>
+      <p class="desc">Coach lives as a real Skill in your Claude. Toggle on/off any time. Cleanest install.</p>
+      <ol class="steps">
+        <li>Download the zip below</li>
+        <li>claude.ai → your name → <b>Customize</b> → <b>Skills</b></li>
+        <li>Click <b>+</b> → <b>+ Create skill</b> → upload the zip</li>
+        <li>Toggle skill ON · ensure "Code execution" is ON</li>
+      </ol>
+      <a class="cta" href="prompt-coach-skill.zip" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+        Download skill (.zip)
+      </a>
+    </div>
+
+    <!-- TIER 2 — PROJECT -->
+    <div class="tier intermediate">
+      <div class="badge">Any plan · 3 min</div>
+      <h2>2 · Install as Project</h2>
+      <div class="req">Needs: any Claude account (Free works)</div>
+      <p class="desc">Build a Claude Project from our files. Persistent, shareable inside your team if you have one.</p>
+      <ol class="steps">
+        <li>Download the zip below</li>
+        <li>claude.ai → <b>Projects</b> → <b>+ New project</b></li>
+        <li>Paste <code>system-prompt.txt</code> into instructions</li>
+        <li>Upload all 5 files from <code>knowledge/</code></li>
+      </ol>
+      <a class="cta" href="prompt-coach-project-bundle.zip" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+        Download project bundle (.zip)
+      </a>
+    </div>
+
+    <!-- TIER 3 — PASTE -->
+    <div class="tier fallback">
+      <div class="badge">Fallback · 30 sec</div>
+      <h2>3 · Paste-block</h2>
+      <div class="req">Needs: any Claude account (incl. logged-out free)</div>
+      <p class="desc">Copy one big block. Paste as your first message in any new Claude chat. Use this if Skill or Project fails.</p>
+      <ol class="steps">
+        <li>Open the file below</li>
+        <li>Copy everything between START PASTE / END PASTE</li>
+        <li>Open new chat at claude.ai</li>
+        <li>Paste as message #1 → Coach activates</li>
+      </ol>
+      <a class="cta" href="COACH-PASTE-BLOCK.md" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m-7 5h8a2 2 0 002-2V7l-4-4H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        Open paste-block
+      </a>
+      <div class="alt-link">Limitation: re-paste at start of each new chat.</div>
+    </div>
+
+  </div>
+
+  <div class="help">
+    <div class="body"><b>Stuck?</b> Type <code>help</code> in the Meet chat — client lead will DM you the right install for your account in 30 seconds. None of this should take more than 3 minutes.</div>
+  </div>
+
+  <div class="footer">
+    <span>Workshop · 04/05/2026 · 09:30–12:30 · WebMD HS Vietnam</span>
+    <span>tony · vibery.app</span>
+  </div>
+</div>
+</body>
+</html>

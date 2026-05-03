@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The 5 prompt patterns — practitioner reference</title>
+<meta name="description" content="Reviewer (score against criteria) · Synthesizer · Drafter · Critic (find what could go wrong) · Translator. Lineage, failure modes, constraints, and ready-to-use prompts. Workshop session 1." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --dark: #141413; --light: #faf9f5; --mid: #b0aea5; --light-gray: #e8e6dc;
+    --orange: #d97757; --blue: #6a9bcc; --green: #788c5d; --red: #c07a6e; --yellow: #d4a84b; --purple: #a07fb5;
+    --font-head: "Be Vietnam Pro", system-ui, sans-serif;
+    --font-body: "Lora", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body); background: var(--light); color: var(--dark);
+    line-height: 1.65; -webkit-font-smoothing: antialiased;
+    padding: 48px 5vw 64px;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; }
+
+  /* ---------- header ---------- */
+  .kicker {
+    font-family: var(--font-head); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.06;
+    margin: 0 0 14px;
+  }
+  .lede {
+    font-family: var(--font-body); font-size: 1.15rem;
+    max-width: 760px; opacity: 0.9; margin: 0 0 12px;
+  }
+  .meta-bar {
+    font-family: var(--font-mono); font-size: 12px; opacity: 0.6;
+    margin-bottom: 32px;
+  }
+  .back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-head); font-size: 13px;
+    color: var(--dark); text-decoration: none;
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+  .back:hover { opacity: 1; color: var(--orange); }
+  .back svg { width: 14px; height: 14px; }
+
+  /* ---------- TOC ---------- */
+  .toc {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 44px;
+    padding: 14px 18px;
+    background: rgba(250,249,245,0.92);
+    border: 1px solid var(--light-gray); border-radius: 12px;
+    position: sticky; top: 12px; z-index: 5;
+    backdrop-filter: blur(8px);
+  }
+  .toc-label {
+    font-family: var(--font-mono); font-size: 11px; opacity: 0.55;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    align-self: center; margin-right: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .toc-label svg { width: 13px; height: 13px; }
+  .toc a {
+    font-family: var(--font-head); font-size: 13px; font-weight: 600;
+    color: var(--dark); text-decoration: none;
+    padding: 5px 12px; border-radius: 16px;
+    border: 1px solid var(--light-gray);
+    transition: all 0.15s;
+  }
+  .toc a:hover { background: var(--orange); color: var(--light); border-color: var(--orange); }
+
+  /* ---------- pattern card ---------- */
+  .pattern {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-radius: 16px;
+    margin-bottom: 28px;
+    border-top: 4px solid var(--orange);
+    scroll-margin-top: 80px;
+    overflow: hidden;
+  }
+  .pattern[data-color="blue"] { border-top-color: var(--blue); }
+  .pattern[data-color="green"] { border-top-color: var(--green); }
+  .pattern[data-color="red"] { border-top-color: var(--red); }
+  .pattern[data-color="purple"] { border-top-color: var(--purple); }
+
+  .pattern-head {
+    padding: 32px 36px 22px;
+    display: flex; align-items: flex-start; gap: 18px;
+  }
+  .pattern-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(217,119,87,0.1);
+    color: var(--orange);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .pattern[data-color="blue"] .pattern-icon { background: rgba(106,155,204,0.12); color: var(--blue); }
+  .pattern[data-color="green"] .pattern-icon { background: rgba(120,140,93,0.12); color: var(--green); }
+  .pattern[data-color="red"] .pattern-icon { background: rgba(192,122,110,0.12); color: var(--red); }
+  .pattern[data-color="purple"] .pattern-icon { background: rgba(160,127,181,0.12); color: var(--purple); }
+  .pattern-icon svg { width: 24px; height: 24px; }
+
+  .pattern-head .text { flex: 1; }
+  .pattern-name-row {
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .pattern-name {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 1.65rem; letter-spacing: -0.02em;
+  }
+  .pattern-tag {
+    font-family: var(--font-mono); font-size: 11px;
+    background: var(--light-gray); padding: 4px 10px; border-radius: 12px;
+    color: var(--dark); opacity: 0.7;
+    letter-spacing: 0.06em;
+  }
+  .pattern-what {
+    font-family: var(--font-body); font-size: 1rem;
+    opacity: 0.85; margin: 0;
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs {
+    display: flex; gap: 0;
+    padding: 0 36px;
+    border-bottom: 1px solid var(--light-gray);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    background: none; border: none;
+    padding: 14px 18px;
+    font-family: var(--font-head); font-weight: 600; font-size: 13.5px;
+    color: var(--dark); opacity: 0.55;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    display: inline-flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+    transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .tab svg { width: 15px; height: 15px; }
+  .tab:hover { opacity: 0.85; }
+  .tab.active {
+    opacity: 1;
+    color: var(--orange);
+    border-bottom-color: var(--orange);
+  }
+  .pattern[data-color="blue"] .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .pattern[data-color="green"] .tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .pattern[data-color="red"] .tab.active { color: var(--red); border-bottom-color: var(--red); }
+  .pattern[data-color="purple"] .tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+  .tab-panels { padding: 28px 36px 32px; }
+  .panel { display: none; animation: fade-in 0.25s ease; }
+  .panel.active { display: block; }
+  @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- panel: prompt ---------- */
+  .usage-note {
+    background: rgba(106,155,204,0.08);
+    border-left: 3px solid var(--blue);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    font-family: var(--font-body); font-size: 13.5px; line-height: 1.55;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .usage-note svg { width: 18px; height: 18px; color: var(--blue); flex-shrink: 0; margin-top: 1px; }
+  .usage-note b { font-family: var(--font-head); font-weight: 600; }
+  .usage-note code {
+    background: rgba(106,155,204,0.15); padding: 1px 5px; border-radius: 3px;
+    font-size: 12px; color: var(--dark);
+  }
+
+  .prompt-block {
+    background: #0d0d0c; color: #e8e6dc;
+    border-radius: 12px; padding: 22px 24px 18px;
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.65;
+    position: relative;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+  }
+  .prompt-block .ph-slot {
+    color: var(--orange); font-weight: 600;
+    display: inline-block;
+  }
+  .prompt-block .ph-placeholder {
+    background: rgba(212,168,75,0.18);
+    color: var(--yellow);
+    padding: 1px 6px; border-radius: 4px;
+    font-size: 12px;
+  }
+  .prompt-block .ph-tag {
+    background: rgba(217,119,87,0.18);
+    color: var(--orange);
+    padding: 1px 6px; border-radius: 4px;
+    font-size: 12px;
+  }
+  .copy-btn {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(255,255,255,0.08);
+    color: var(--light);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 6px 12px; border-radius: 18px;
+    font-family: var(--font-head); font-size: 12px; font-weight: 500;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--orange); border-color: var(--orange); }
+  .copy-btn.copied { background: var(--green); border-color: var(--green); }
+  .copy-btn svg { width: 13px; height: 13px; }
+
+  .prompt-hint {
+    margin-top: 14px;
+    font-family: var(--font-body); font-size: 13.5px; opacity: 0.75;
+    line-height: 1.55;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .prompt-hint svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--orange); }
+
+  /* ---------- panel: lineage ---------- */
+  .lineage {
+    font-family: var(--font-body); font-size: 15.5px; line-height: 1.7;
+    margin: 0;
+  }
+  .lineage b { font-weight: 600; }
+
+  /* ---------- panel: failures ---------- */
+  .failures { list-style: none; padding: 0; margin: 0; }
+  .failures li {
+    padding: 14px 0 14px 36px;
+    border-bottom: 1px dashed var(--light-gray);
+    position: relative;
+    font-size: 14.5px; line-height: 1.6;
+  }
+  .failures li:last-child { border-bottom: none; padding-bottom: 0; }
+  .failures li svg.fail-icon {
+    position: absolute; left: 0; top: 16px;
+    width: 18px; height: 18px;
+    color: var(--red);
+  }
+  .failures .fname {
+    font-family: var(--font-head); font-weight: 600;
+    font-size: 14.5px; color: var(--dark);
+    display: block; margin-bottom: 4px;
+  }
+  .failures .fbody { opacity: 0.85; }
+  .failures .fsource {
+    display: inline-block;
+    font-family: var(--font-mono); font-size: 11px;
+    margin-left: 6px;
+  }
+  .failures .fsource a {
+    color: var(--mid); text-decoration: none;
+    border-bottom: 1px dotted var(--mid);
+  }
+  .failures .fsource a:hover { color: var(--orange); border-bottom-color: var(--orange); }
+
+  /* ---------- panel: constraints ---------- */
+  .constraints { list-style: none; padding: 0; margin: 0; }
+  .constraints li {
+    padding: 14px 0 14px 36px;
+    border-bottom: 1px dashed var(--light-gray);
+    position: relative;
+  }
+  .constraints li:last-child { border-bottom: none; padding-bottom: 0; }
+  .constraints li svg.con-icon {
+    position: absolute; left: 0; top: 16px;
+    width: 18px; height: 18px;
+    color: var(--green);
+  }
+  .constraints .crule {
+    font-family: var(--font-mono); font-size: 13px;
+    color: var(--dark); font-weight: 500;
+    line-height: 1.55;
+    display: block;
+  }
+  .constraints .crule code {
+    background: var(--light-gray); padding: 1px 5px; border-radius: 3px; font-size: 12px;
+  }
+  .constraints .cwhy {
+    font-family: var(--font-body); font-size: 13px;
+    opacity: 0.7; font-style: italic;
+    display: block; margin-top: 5px;
+  }
+  .constraints .cwhy::before {
+    content: "→ ";
+    color: var(--green); font-weight: 600; font-style: normal;
+    margin-right: 2px;
+  }
+
+  /* ---------- sources block ---------- */
+  .sources-block {
+    background: #fff; border: 1px solid var(--light-gray); border-radius: 14px;
+    padding: 24px 28px; margin-top: 28px;
+  }
+  .sources-block h3 {
+    font-family: var(--font-head); font-weight: 600; font-size: 1.1rem;
+    margin: 0 0 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sources-block h3 svg { width: 18px; height: 18px; color: var(--orange); }
+  .sources-block ul { list-style: none; padding: 0; margin: 0; }
+  .sources-block li {
+    font-family: var(--font-mono); font-size: 12px; line-height: 1.55;
+    padding: 6px 0; opacity: 0.85;
+  }
+  .sources-block a { color: var(--orange); text-decoration: none; }
+  .sources-block a:hover { text-decoration: underline; }
+
+  /* ---------- footer ---------- */
+  .footer {
+    margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--light-gray);
+    font-family: var(--font-mono); font-size: 12px; opacity: 0.6;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+
+  @media (max-width: 720px) {
+    .pattern-head, .tabs, .tab-panels { padding-left: 22px; padding-right: 22px; }
+    .toc { position: static; }
+    .tab { padding: 12px 14px; font-size: 13px; }
+  }
+  @media print {
+    body { padding: 24px; }
+    .pattern { page-break-inside: avoid; box-shadow: none; }
+    .toc, .copy-btn { display: none; }
+    .tabs { display: none; }
+    .panel { display: block !important; }
+    .panel:not(:first-child) { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--light-gray); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../slides.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    back to slides
+  </a>
+  <div class="kicker">Workshop reference · session 1 · slide 15 deep-dive</div>
+  <h1>The 5 prompt patterns — practitioner reference</h1>
+  <p class="lede">You already do these jobs without AI. This card names the professional tradition each pattern inherits from, the AI-specific failure modes that surface when you bring a model into the workflow, and the prompt-level constraints that defend against each failure. <b>Each pattern includes a copy-ready prompt.</b></p>
+  <div class="meta-bar">Sources cited inline. Last updated 2026-05-02 · WebMD HS workshop · author: Tony Bùi</div>
+
+  <div class="toc">
+    <span class="toc-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      jump:
+    </span>
+    <a href="#reviewer">Reviewer</a>
+    <a href="#synthesizer">Synthesizer</a>
+    <a href="#drafter">Drafter</a>
+    <a href="#critic">Critic</a>
+    <a href="#translator">Translator</a>
+    <a href="#sources">Sources</a>
+  </div>
+
+  <!-- ============ REVIEWER ============ -->
+  <article class="pattern" id="reviewer">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- icon: shield-check (defense + verification) -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Reviewer</div>
+          <span class="pattern-tag">score against criteria</span>
+        </div>
+        <p class="pattern-what">Score existing work against your rubric. Severity-tagged findings, row by row. Mental model: <em>"does this meet the bar?"</em> Don't rewrite — flag, cite, rank.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="rev-prompt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Prompt</button>
+      <button class="tab" data-panel="rev-lineage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Lineage</button>
+      <button class="tab" data-panel="rev-fail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>AI failures</button>
+      <button class="tab" data-panel="rev-con"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Constraints</button>
+    </div>
+
+    <div class="tab-panels">
+      <!-- PROMPT -->
+      <div class="panel active" id="rev-prompt">
+        <div class="usage-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span><b>How to use:</b> paste this once into a Claude Project's <code>Custom Instructions</code> (or as the first message in a new chat). Then send your artifact as the next user message. Reuse forever — never edit the prompt itself.</span>
+        </div>
+        <div class="prompt-block"><button class="copy-btn" data-target="rev-prompt-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button><span id="rev-prompt-text"><span class="ph-slot">Role:</span> You are a senior reviewer for an employee well-being platform (members, health coaches, HR program managers, HIPAA + VN PDPL scope). You spot ambiguity that downstream teams would interpret three different ways. You are adversarial — assume any draft is wrong until proven correct.
+
+<span class="ph-slot">Input:</span> The user will send you ONE artifact per message — a PRD section, spec, design brief, or similar document. Treat each user message as a fresh review request.
+
+<span class="ph-slot">Task:</span> When you receive an artifact, review it section by section. Output one defect row per finding.
+
+<span class="ph-slot">Constraints:</span>
+- Do NOT rewrite the artifact — flag, cite, rank only.
+- Quote every regulation, AC, or section number verbatim from the artifact. If a citation is not in the artifact you received, mark it <span class="ph-tag">[NOT IN SOURCE]</span>.
+- For artifacts longer than 2 pages, review one section at a time and tell the user "section 1 of N reviewed — paste section 2 to continue."
+- Surface structural defects (missing AC, undefined terms, ambiguous scope) before style nits.
+- Mark every assumption you have to make with <span class="ph-tag">[ASSUMPTION: ...]</span>.
+- If the user has not yet sent an artifact, respond: "Paste the artifact you want reviewed. I'll respond with a defect table."
+
+<span class="ph-slot">Output format:</span> Markdown table —
+| # | Section | Original phrase (quoted) | Defect | Severity (Blocker / Major / Nit) | Reason |
+
+Then sections: "Compliance flags", "Unresolved assumptions", "Sections I could not review (and why)".
+
+<span class="ph-slot">Behavior:</span> If user asks "rewrite this" or "fix it," refuse: "My role is to flag defects, not rewrite. Send the next artifact when ready."</span></div>
+        <div class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Set this as Project instructions once. Every new chat in that Project starts in adversarial-review mode. Just paste artifacts — no need to retype the role each time.
+        </div>
+      </div>
+
+      <!-- LINEAGE -->
+      <div class="panel" id="rev-lineage">
+        <p class="lineage">Inherits from <b>Fagan-style inspection</b> (Michael Fagan, IBM 1976) — the discipline behind Google's "readability" code-review process and behind aerospace/medical-device spec inspection (DO-178C, IEC 62304). The reviewer's job isn't to rewrite; it's to surface defects against an explicit rubric (correctness, completeness, traceability, testability) and to rank severity. The same discipline you already apply to PRDs against HIPAA and accessibility checklists — the AI-assisted version inherits the rubric, not the judgment.</p>
+      </div>
+
+      <!-- FAILURES -->
+      <div class="panel" id="rev-fail">
+        <ul class="failures">
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Sycophantic agreement with the author's framing</span>
+            <span class="fbody">When a draft asserts "this is HIPAA-compliant," the model follows the premise instead of challenging it. GPT-4o, Claude Sonnet, and Gemini 1.5 Pro showed 58% overall sycophancy on factual/safety questions; Gemini hit 62%.<span class="fsource">[<a href="https://arxiv.org/abs/2411.15287" target="_blank" rel="noopener">arxiv 2411.15287</a>, <a href="https://aclanthology.org/2025.findings-emnlp.1241.pdf" target="_blank" rel="noopener">EMNLP 2025</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">False negatives on long artifacts</span>
+            <span class="fbody">Reviewers cannot exhaustively enumerate cases as input length grows. Multi-path error handling and edge-case branches are skipped even with chain-of-thought.<span class="fsource">[<a href="https://arxiv.org/html/2508.12358v1" target="_blank" rel="noopener">arxiv 2508.12358</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Surface nits crowd out structural defects</span>
+            <span class="fbody">"LLM Critics Help Catch LLM Bugs" (Saunders et al., OpenAI 2024) shows AI critics produce more comments than humans but bias toward style over correctness — exactly inverted from what a senior reviewer prioritizes.<span class="fsource">[<a href="https://arxiv.org/abs/2407.00215" target="_blank" rel="noopener">arxiv 2407.00215</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Fabricated citations</span>
+            <span class="fbody">Invented section numbers, library names (~20% of suggested packages don't exist), invented HIPAA subparts that "look right." A PRD review that confidently cites <code>HIPAA §164.502(j)(2)</code> may be citing a subpart that doesn't exist.<span class="fsource">[<a href="https://diffray.ai/blog/llm-hallucinations-code-review/" target="_blank" rel="noopener">diffray</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Authority laundering</span>
+            <span class="fbody">Once a draft is in the prompt context, the model treats it as ground truth and will defend the author's wrong claim if pushed back on. The opposite of an adversarial review posture.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- CONSTRAINTS -->
+      <div class="panel" id="rev-con">
+        <ul class="constraints">
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Adopt an adversarial posture. Assume the draft is wrong until proven correct."</span>
+            <span class="cwhy">Defends sycophantic agreement. Without this, the model performs review theatre — agreeing with the author's framing.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Output a numbered defect list with severity (Blocker / Major / Nit), not prose."</span>
+            <span class="cwhy">Defends nit-flooding. Forces ranking; you can audit the Blockers count separately.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Quote every regulation, AC, or section number verbatim from context. If not in context, mark <code>[NOT IN SOURCE]</code>."</span>
+            <span class="cwhy">Defends fabrication. Auditable trail for compliance review.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"For artifacts longer than 2 pages, review one section at a time. Do not summarize the whole."</span>
+            <span class="cwhy">Defends length-induced false negatives. Section-level scoping keeps each pass exhaustive.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ SYNTHESIZER ============ -->
+  <article class="pattern" id="synthesizer" data-color="blue">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- icon: layers (clustering) -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Synthesizer</div>
+          <span class="pattern-tag">cluster qualitative inputs into themes</span>
+        </div>
+        <p class="pattern-what">Cluster many inputs (interviews, surveys, support tickets) into themes. Cite source IDs for every claim. Keep human voices distinct from interpretations. Never invent quotes.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="syn-prompt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Prompt</button>
+      <button class="tab" data-panel="syn-lineage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Lineage</button>
+      <button class="tab" data-panel="syn-fail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>AI failures</button>
+      <button class="tab" data-panel="syn-con"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Constraints</button>
+    </div>
+
+    <div class="tab-panels">
+      <div class="panel active" id="syn-prompt">
+        <div class="usage-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span><b>How to use:</b> paste this once into a Claude Project's <code>Custom Instructions</code>. Upload your codebook as a <b>knowledge file</b> (or paste in the first message). Then send batches of inputs (P1, P2, T-417, etc.) as user messages. Coach maintains the codebook across the session.</span>
+        </div>
+        <div class="prompt-block"><button class="copy-btn" data-target="syn-prompt-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button><span id="syn-prompt-text"><span class="ph-slot">Role:</span> You are a UX researcher who clusters qualitative data into themes without losing nuance. You cite source IDs for every claim. You distinguish semantic (what was said) from latent (what is implied).
+
+<span class="ph-slot">Input protocol:</span>
+- The user will send a sequence of messages. The FIRST message after this one will contain either: (a) the codebook to use, OR (b) the words "open coding" if no codebook exists.
+- Subsequent messages will contain inputs — each tagged with a stable source ID like P1, P2, T-417, sup-2024-0541, etc.
+- The user may also send a research goal at any time. Use it to scope your output.
+- If the user sends inputs WITHOUT first sending a codebook, ask: "Send the codebook first, or type 'open coding' to let me propose codes."
+
+<span class="ph-slot">Task per input batch:</span>
+1. Cluster inputs into themes using the active codebook.
+2. For each theme: name, frequency in this batch, source IDs, 2 verbatim quotes.
+3. Rank themes by frequency.
+4. List 3 disconfirming examples per theme (cases that don't fit).
+5. Identify tensions (themes that contradict each other).
+6. Surface 3 weak signals (1-2 mentions but feel important).
+
+<span class="ph-slot">Constraints:</span>
+- Verbatim quotes only. Never paraphrase. Never invent.
+- Every quote must include source ID. If you cannot cite, do not quote.
+- Mark interpretations as <span class="ph-tag">[INTERPRETATION]</span>. Distinguish from <span class="ph-tag">[SEMANTIC]</span>.
+- Flag any quote suggesting clinical/safety concern with <span class="ph-tag">[FLAG — clinical review]</span>.
+- Items that don't fit the codebook → <span class="ph-tag">[UNCODED]</span>.
+- Codebook drift check: at the start of each batch, list any code definitions you are interpreting differently than the previous batch. Flag as <span class="ph-tag">[DRIFT WARNING]</span>.
+
+<span class="ph-slot">Output format per batch:</span> Markdown table —
+| Theme | Frequency | Source IDs | Quote 1 | Quote 2 | Disconfirming |
+
+Then sections: "Tensions", "Weak signals", "Uncoded items", "Drift warnings (if any)".
+
+<span class="ph-slot">Behavior:</span> If the user asks "what's the conclusion" or "summarize across all batches," respond with a meta-summary that explicitly cites which batch each theme came from. Do not blend batches.</span></div>
+        <div class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          The codebook is what stops drift. Upload it as a Project knowledge file — it survives every chat. Run "codebook-only pass" first if you don't have one (give 5 inputs, ask AI to propose codes, you approve, then load as the codebook).
+        </div>
+      </div>
+
+      <div class="panel" id="syn-lineage">
+        <p class="lineage">Inherits from <b>reflexive thematic analysis</b> (Braun & Clarke 2006, updated 2019/2022) and Saldaña's <i>Coding Manual for Qualitative Researchers</i> (open → axial → selective coding). The canon UX researchers and BAs use to turn 30 interviews or 800 support tickets into themes. The hallmark is the <b>codebook</b>: a stable set of named codes with definitions, examples, and inclusion/exclusion rules. AI-assisted synthesis is the same pipeline — the codebook is what stops the model from drifting.</p>
+      </div>
+
+      <div class="panel" id="syn-fail">
+        <ul class="failures">
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Quote fabrication</span>
+            <span class="fbody">"Themes are highly descriptive, and details such as quotes may be fabricated by the model" (De Paoli, SAGE 2024). Example: AI produces "as one member said, 'my coach never followed up after week 2'" — no such quote exists in the transcripts.<span class="fsource">[<a href="https://journals.sagepub.com/doi/10.1177/08944393231220483" target="_blank" rel="noopener">SAGE 2024</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Latent meaning missed; surface paraphrase wins</span>
+            <span class="fbody">Evaluators preferred LLM codes 61% of the time but flagged that LLMs miss latent interpretations and produce themes with fuzzy boundaries.<span class="fsource">[<a href="https://arxiv.org/html/2510.18456v1" target="_blank" rel="noopener">arxiv 2510.18456</a>, <a href="https://arxiv.org/html/2511.14528v1" target="_blank" rel="noopener">arxiv 2511.14528</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Premature saturation</span>
+            <span class="fbody">LLMs declare "themes converged" before novel data is exhausted, breaking inductive saturation as a validity metric.<span class="fsource">[<a href="https://link.springer.com/article/10.1007/s11135-024-01950-6" target="_blank" rel="noopener">Springer</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Codebook drift across batches</span>
+            <span class="fbody">Without a fixed codebook, the same support ticket gets coded differently in batch 1 vs. batch 3. Theme labels mutate silently. Comparison across waves becomes invalid.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Fragmentation</span>
+            <span class="fbody">LLMs over-split, producing 40 codes where a senior researcher would consolidate to 8.<span class="fsource">[<a href="https://www.eecis.udel.edu/~mlm/docs/2025-Wang-CSCW-LATA-Paper.pdf" target="_blank" rel="noopener">LATA · CSCW 2025</a>]</span></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel" id="syn-con">
+        <ul class="constraints">
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Every quote must include the source ID. If you cannot cite, do not quote."</span>
+            <span class="cwhy">Defends fabrication. The cite-or-don't-quote rule is what makes synthesis auditable.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Apply this exact codebook. Do not invent new codes. Flag uncodable items as <code>[UNCODED]</code>."</span>
+            <span class="cwhy">Defends drift + fragmentation. The codebook is the discipline; the model is the executor.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"After clustering, list 3 disconfirming examples per theme."</span>
+            <span class="cwhy">Defends premature saturation and surface bias. Forces the model to look for cases that don't fit.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Distinguish semantic (what was said) from latent (what is implied). Label each."</span>
+            <span class="cwhy">Defends paraphrase-over-interpretation. Separates voices from inferences.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ DRAFTER ============ -->
+  <article class="pattern" id="drafter" data-color="green">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- icon: pen-tool / draft -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Drafter</div>
+          <span class="pattern-tag">generate first-pass content from a brief</span>
+        </div>
+        <p class="pattern-what">Turn a brief into a first draft — PRDs, user stories, microcopy. The draft's job is to be wrong in a useful way so the team can correct it fast. Mark every assumption.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="dra-prompt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Prompt</button>
+      <button class="tab" data-panel="dra-lineage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Lineage</button>
+      <button class="tab" data-panel="dra-fail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>AI failures</button>
+      <button class="tab" data-panel="dra-con"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Constraints</button>
+    </div>
+
+    <div class="tab-panels">
+      <div class="panel active" id="dra-prompt">
+        <div class="usage-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span><b>How to use:</b> paste this once into a Claude Project's <code>Custom Instructions</code>. Then send your feature brief as the next user message — using the brief template Coach will request. Reuse for every new PRD without retyping the role.</span>
+        </div>
+        <div class="prompt-block"><button class="copy-btn" data-target="dra-prompt-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button><span id="dra-prompt-text"><span class="ph-slot">Role:</span> You are a senior PM writing build-ready PRDs for an employee well-being platform (WebMD ONE / TINYpulse / shared platform · members + coaches + HR program managers · HIPAA + VN PDPL scope). You write user stories in INVEST form with Given-When-Then ACs. You never invent requirements that aren't in the brief.
+
+<span class="ph-slot">Input protocol:</span> The user will send a feature brief per message. The brief should contain at minimum:
+- Feature working title
+- Problem (1-2 sentences)
+- Target user (primary + secondary)
+- Constraints (regulations, integrations, deadline)
+- Out of scope (or "flag candidates")
+
+If the user sends a request without a brief, respond with the template above and ask them to fill it. Do NOT start drafting from a vague request.
+
+<span class="ph-slot">Task per brief:</span> Draft these sections in order —
+1. Problem statement (3-4 sentences)
+2. Goals + non-goals (bullet list)
+3. User stories (3-5, INVEST attributes)
+4. Acceptance criteria per story (Given-When-Then)
+5. Edge cases (empty state · failure · permission · concurrency)
+6. Open questions (each marked <span class="ph-tag">[TBC: question]</span>)
+
+<span class="ph-slot">Constraints:</span>
+- If a fact (regulation, metric, persona, integration) is NOT in the brief, mark <span class="ph-tag">[ASSUMPTION: ...]</span> inline. Do not invent.
+- Flag every PHI / employee-data handling line with <span class="ph-tag">[COMPLIANCE — HIPAA]</span> or <span class="ph-tag">[COMPLIANCE — PDPL]</span>.
+- Don't write implementation details (no API shapes, no DB schemas).
+- Don't invent regulations not stated in the brief.
+- For any section the user labels "risky" or "high-stakes," produce 3 variants and explain trade-offs.
+- If the brief mentions an integration (Slack, YouTrack, Salesforce, etc.) not detailed, mark integration assumptions <span class="ph-tag">[ASSUMPTION: integration shape TBC]</span>.
+
+<span class="ph-slot">Output format:</span> Markdown with H2 section headers in the order above. User stories as table —
+| # | As a | I can | So that | AC (G/W/T) | Flags |
+
+End every draft with a "What I had to assume" section listing every <span class="ph-tag">[ASSUMPTION]</span> tag in one place — easy review checklist.
+
+<span class="ph-slot">Behavior:</span> If the user sends "iterate on story 3" or "expand goals section," respond by drafting only that section while preserving all prior assumptions and tags. Treat each chat as a stateful drafting session.</span></div>
+        <div class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          A drafter prompt is only as good as the brief. The "ask for the template if missing" behavior forces good briefs — most "AI is bad at PRDs" complaints come from lazy briefs.
+        </div>
+      </div>
+
+      <div class="panel" id="dra-lineage">
+        <p class="lineage">Inherits from <b>technical writing from a spec sheet</b> (IEEE 830 SRS template, INVEST user-story criteria, the BABOK requirements elicitation→specification flow) and <b>briefing-doc writing</b> in advertising (the creative brief → first draft → revision loop). The senior PM already knows: a draft is only as good as the brief, and a useful draft is wrong in ways the team can correct fast.</p>
+      </div>
+
+      <div class="panel" id="dra-fail">
+        <ul class="failures">
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Plausible-sounding fabricated regulations</span>
+            <span class="fbody">AI strings together realistic citations and statutes that look authoritative but are invented. The Damien Charlotin database tracks 200+ court filings sanctioned for hallucinated citations. For a PRD: AI cites <code>HIPAA §164.502(j)(2)</code>; auditor checks; subpart doesn't exist.<span class="fsource">[<a href="https://www.damiencharlotin.com/hallucinations/" target="_blank" rel="noopener">Charlotin DB</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Lower acceptance-criteria quality than humans</span>
+            <span class="fbody">LLM-generated user stories meet AC quality criteria less often than human-written ones, regardless of model scale. ACs from AI tend to be vaguer and miss edge conditions.<span class="fsource">[<a href="https://arxiv.org/html/2507.15157v1" target="_blank" rel="noopener">arxiv 2507.15157</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Mode collapse / low diversity</span>
+            <span class="fbody">Same brief produces the same generic draft. AI covers the obvious 70% well but misses the edge cases a senior PM would catch.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Confident fill-in for missing info</span>
+            <span class="fbody">When the brief is silent on a constraint (e.g. PDPL data residency), the model invents a reasonable-sounding requirement rather than flagging the gap. The fill-in reads as authoritative because it sounds like every other requirement in the doc.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Context-window contamination</span>
+            <span class="fbody">Example PRDs fed as "style references" get partially copied into the new draft — member personas from another customer leak in, language from prior projects appears as if it were new.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel" id="dra-con">
+        <ul class="constraints">
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"If a fact (regulation, metric, persona, integration) is not in the brief, mark <code>[ASSUMPTION]</code> inline. Do not invent."</span>
+            <span class="cwhy">Defends fabrication and silent fill-in. Every gap becomes visible to the reviewer instead of being hidden by plausible prose.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Produce 3 variants for any section labelled 'risky' or 'high-stakes'."</span>
+            <span class="cwhy">Defends mode collapse. Forces the model to consider alternatives instead of converging on the obvious.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Every user story must include all 6 INVEST attributes. ACs in Given-When-Then form."</span>
+            <span class="cwhy">Defends low AC quality. Forces the structural rigor a senior PM would apply.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Do not lift sentences from style references. Use them only for tone."</span>
+            <span class="cwhy">Defends contamination. Prevents leakage between projects.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ CRITIC ============ -->
+  <article class="pattern" id="critic" data-color="red">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- icon: zap (stress test / red team energy) -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Critic</div>
+          <span class="pattern-tag">find what could go wrong</span>
+        </div>
+        <p class="pattern-what">Operate on a plan with no rubric. Adversarial. Surface edge cases and failure modes, ranked by likelihood × impact. Mental model: <em>"what could break?"</em></p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="cri-prompt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Prompt</button>
+      <button class="tab" data-panel="cri-lineage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Lineage</button>
+      <button class="tab" data-panel="cri-fail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>AI failures</button>
+      <button class="tab" data-panel="cri-con"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Constraints</button>
+    </div>
+
+    <div class="tab-panels">
+      <div class="panel active" id="cri-prompt">
+        <div class="usage-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span><b>How to use:</b> paste this once into a Claude Project's <code>Custom Instructions</code>. Then send each PRD or plan you want stress-tested as a user message. Coach treats every message as a fresh pre-mortem.</span>
+        </div>
+        <div class="prompt-block"><button class="copy-btn" data-target="cri-prompt-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button><span id="cri-prompt-text"><span class="ph-slot">Role:</span> You are a skeptical product strategist who has shipped corporate wellness products (members + coaches + HR program managers, HIPAA + VN PDPL scope) for 10 years. Your job is to find what could go wrong before launch — not to be charitable to the plan. You do not soften. If the plan is bad, you say so in the first sentence.
+
+<span class="ph-slot">Input protocol:</span> The user will send a plan, PRD, or pre-launch artifact per message. They may also include a launch window ("3 weeks out") — use it to scope time-sensitive risks. If the user sends a plan without a target launch date, ask: "When does this ship? Risk-ranking depends on time-to-launch."
+
+<span class="ph-slot">Task per artifact:</span> Run a pre-mortem.
+1. Assume the launch failed in 90 days post-ship. Write the post-mortem.
+2. List 8-12 failure causes ranked by likelihood × impact.
+3. Include at least 2 compliance/privacy failure paths AND 2 operational failure paths AND 2 user-trust failure paths.
+4. For each cause name: (a) the specific user or regulator action that exposes it, (b) the leading indicator you'd see first, (c) ONE concrete mitigation (not "monitor closely" — name the specific change to the plan).
+5. If the plan is fundamentally bad, say so in your first sentence.
+
+<span class="ph-slot">Constraints:</span>
+- Do not invent concerns the plan doesn't expose. Cite the specific phrase from the artifact that triggers each concern.
+- Do not moralize — surface, don't lecture.
+- ONE concrete mitigation per concern. Mitigations like "improve communication" or "monitor closely" are rejected — name the specific change.
+- HIPAA breach paths and VN PDPL cross-border-transfer issues must be in the top 5 if they exist in the plan.
+- Refuse plan-validation requests. If user asks "is this good?" respond: "I'm not your validator. I'm your pre-mortem. Here's what fails:" then continue.
+
+<span class="ph-slot">Output format:</span> Markdown table —
+| # | Concern | Severity (Blocker / High / Medium / Low) | Likelihood (Likely / Possible / Edge) | Triggered by (verbatim quote from artifact) | Leading indicator | Mitigation | Owner <span class="ph-tag">[TBC]</span> |
+
+Then sections: "Top 3 to fix before launch", "Concerns I could not assess (and why)".
+
+<span class="ph-slot">Behavior:</span> If the user pushes back ("this won't happen because..."), do NOT flip your stance. Acknowledge: "Noted. The risk remains in the table because the plan doesn't address [specific phrase]. Update the plan, then I'll re-assess." Sycophancy is the failure mode this prompt defends against.</span></div>
+        <div class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          The pre-mortem framing ("assume it failed") flips sycophancy. The "do not flip your stance under pushback" rule is the second guardrail — most stress-tests fail at the second turn, not the first.
+        </div>
+      </div>
+
+      <div class="panel" id="cri-lineage">
+        <p class="lineage">Inherits from <b>pre-mortem</b> (Gary Klein, <i>HBR</i> 2007 — "imagine the project failed; explain why"), <b>red-teaming</b> (US DoD/NSA origin, now standard in security and AI safety), and <b>FMEA</b> (Failure Mode and Effects Analysis, NASA/automotive, ISO/IEC). All three share the same move: shift the stance from "will this work?" to "assume it failed; what's the most likely cause?" Senior PMs at a HIPAA-regulated company already run pre-launch reviews against an incident-causes checklist.</p>
+      </div>
+
+      <div class="panel" id="cri-fail">
+        <ul class="failures">
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Sycophantic plan-validation</span>
+            <span class="fbody">Once you say "I'm planning to ship X," the model defends X. Multi-round LLM debates converge on the user's framing through asymmetric persuasion. In medical Q&A, sycophancy produced false reassurance even when the prompt was wrong.<span class="fsource">[<a href="https://link.springer.com/article/10.1140/epjds/s13688-025-00579-1" target="_blank" rel="noopener">EPJ Data Sci</a>, <a href="https://www.nature.com/articles/s41746-025-02008-z" target="_blank" rel="noopener">npj Digital Medicine</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Generic risk lists that don't engage specifics</span>
+            <span class="fbody">"Scalability, security, UX." The model lists archetypes, not failure paths tied to your specific artifact.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Argument-driven flipping</span>
+            <span class="fbody">Adversarial counter-prompts flip the model's stance regardless of evidence — so "are you sure?" alone can't be trusted as a stress test. The model is responsive to pressure, not reasoning.<span class="fsource">[<a href="https://aclanthology.org/2025.findings-emnlp.1241.pdf" target="_blank" rel="noopener">EMNLP 2025</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">No probability calibration</span>
+            <span class="fbody">Every risk is presented at the same weight. No sense of "this one is likely, this one is rare" — defeats the point of risk-ranking.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Compliance blind spots</span>
+            <span class="fbody">The model surfaces UX risks fluently but under-weights regulatory and privacy failure modes unless explicitly scoped — HIPAA breach paths, PDPL cross-border-transfer issues get missed.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel" id="cri-con">
+        <ul class="constraints">
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Assume the launch failed in 90 days. Write the post-mortem. List the top 5 causes ranked by likelihood × impact."</span>
+            <span class="cwhy">Forces the pre-mortem framing. Defends sycophancy by inverting the question.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"For each risk, name (a) the specific user/regulator action that would expose it, (b) the leading indicator we'd see first."</span>
+            <span class="cwhy">Defends the generic-list mode. Forces engagement with the specific artifact.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Include at least 2 compliance/privacy failure paths and 2 operational failure paths."</span>
+            <span class="cwhy">Defends compliance blind spot. Ensures regulated-domain concerns get equal weight.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Do not soften. If the plan is bad, say so in the first sentence."</span>
+            <span class="cwhy">Counter-pressure against agreement bias. Imperfect — sycophancy is encoded in latent directions and not fully fixable by prompt — but it raises the bar.<span class="fsource">[<a href="https://arxiv.org/html/2509.21305v1" target="_blank" rel="noopener">arxiv 2509.21305</a>]</span></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ TRANSLATOR ============ -->
+  <article class="pattern" id="translator" data-color="purple">
+    <div class="pattern-head">
+      <div class="pattern-icon">
+        <!-- icon: arrows-right-left (translation / convert) -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      </div>
+      <div class="text">
+        <div class="pattern-name-row">
+          <div class="pattern-name">Translator</div>
+          <span class="pattern-tag">convert format or audience, preserve meaning</span>
+        </div>
+        <p class="pattern-what">Same meaning, different shape. PRD → tickets. Tech spec → member-facing copy. The acceptance criterion is invariance: meaning before and after must be identical, only the form moves.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="tra-prompt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Prompt</button>
+      <button class="tab" data-panel="tra-lineage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Lineage</button>
+      <button class="tab" data-panel="tra-fail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>AI failures</button>
+      <button class="tab" data-panel="tra-con"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Constraints</button>
+    </div>
+
+    <div class="tab-panels">
+      <div class="panel active" id="tra-prompt">
+        <div class="usage-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span><b>How to use:</b> paste this once into a Claude Project's <code>Custom Instructions</code>. Upload your team's glossary as a <b>knowledge file</b>. Then send PRD sections as user messages — Coach translates each to YouTrack tickets with the back-translation diff.</span>
+        </div>
+        <div class="prompt-block"><button class="copy-btn" data-target="tra-prompt-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button><span id="tra-prompt-text"><span class="ph-slot">Role:</span> You are a senior PO who translates PRD sections into YouTrack tickets ready for engineering pickup. You preserve every requirement verbatim. You never invent priorities or labels. Translation is INVARIANCE — meaning before and after must be identical, only form changes.
+
+<span class="ph-slot">Standing context (applies to every message):</span>
+- Target products: WebMD ONE, TINYpulse
+- Compliance scope: HIPAA + VN PDPL
+- Sprint cadence: 2 weeks (unless user states otherwise)
+- Glossary (use these terms EXACTLY — do not vary even within a single ticket):
+  - member = thành viên · never "user" / "patient" / "customer"
+  - health coach = huấn luyện viên · never "clinician" / "therapist"
+  - HR program manager = quản lý chương trình HR
+  - YouTrack ticket = vé YouTrack · never "Jira issue" / "task"
+  - Add other team-specific terms via the user's first message or knowledge file.
+
+<span class="ph-slot">Input protocol:</span> The user will send a PRD section per message. They may include a launch sprint number — use it to set tentative priority (mark <span class="ph-tag">[TBC]</span>). If sent only "translate this" without a PRD, ask: "Send the PRD section. I translate one section per message."
+
+<span class="ph-slot">Task per PRD section:</span>
+1. Convert each user story into ONE YouTrack ticket.
+2. Each ticket: Title · Description · AC (G/W/T) · Priority <span class="ph-tag">[TBC]</span> · Labels · Story Points <span class="ph-tag">[TBC]</span> · Flags.
+3. Flag dependencies between tickets.
+4. Output a back-translation of every AC and diff against the source. Flag any non-identical AC as <span class="ph-tag">[DRIFT]</span>.
+5. List orphan clauses at the end — anything in the source that didn't land in a ticket.
+
+<span class="ph-slot">Constraints:</span>
+- Preserve every AC verbatim. Do not paraphrase. If source is ambiguous, copy as-is and add <span class="ph-tag">[CLARIFY]</span>.
+- Don't invent priorities or story points — always mark <span class="ph-tag">[TBC: confirm with PM]</span>.
+- Flag PHI handling lines with <span class="ph-tag">[COMPLIANCE — HIPAA]</span>.
+- Use the glossary EXACTLY. Do not vary terms within or across tickets.
+- Do not add adjectives, benefits, or marketing claims not in the source.
+- Every clause in the source must appear in exactly ONE output ticket. Orphans go in the orphan section.
+
+<span class="ph-slot">Output format:</span> Markdown table —
+| # | Title | Description | AC (G/W/T) | Priority | Labels | Points | Flags |
+
+Then sections: "Dependencies" · "AC back-translation diff (source ↔ ticket)" · "Orphan clauses" · "Compliance flags" · "Drift warnings (if any)".
+
+<span class="ph-slot">Behavior:</span> If user asks "improve this AC" or "make it clearer" — refuse: "Translation is invariant. If the AC needs clarification, that's a Drafter task, not a Translator task. Send the updated PRD." If user sends a glossary update mid-session, acknowledge and apply going forward.</span></div>
+        <div class="prompt-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          The back-translation diff is the auditability hook — it makes silent paraphrase visible. Glossary survives the chat as a Project knowledge file. Refusing improvement requests is what keeps Translator pure (otherwise it drifts into Drafter mode).
+        </div>
+      </div>
+
+      <div class="panel" id="tra-lineage">
+        <p class="lineage">Inherits from <b>technical translation</b> (ISO 17100 — meaning preserved verbatim, only register changes), <b>plain-language rewriting</b> (US Plain Writing Act 2010, CDC/AHRQ Health Literacy guidelines for patient-facing copy), and <b>requirements decomposition</b> (BABOK, INVEST). The senior BA already knows the rule: in translation, the acceptance criterion is invariance — meaning before and after must be identical, only the form moves.</p>
+      </div>
+
+      <div class="panel" id="tra-fail">
+        <ul class="failures">
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Acceptance-criteria paraphrase / drift</span>
+            <span class="fbody">LLMs introduce terminology drift in long technical/legal documents. PRD says "coach must respond within 24 business hours"; YouTrack ticket reads "coach should respond within a day." Drift is silent.<span class="fsource">[<a href="https://www.evidentlyai.com/llm-guide/llm-as-a-judge" target="_blank" rel="noopener">Evidently</a>, <a href="https://arxiv.org/html/2507.15157v1" target="_blank" rel="noopener">arxiv 2507.15157</a>]</span></span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Silent reading-level over-simplification</span>
+            <span class="fbody">Converting a PRD to "patient-friendly" copy, the model drops conditions ("if you have diabetes AND are over 65") because they look like clutter. Clinical meaning changes without anyone noticing.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Lost edge cases on decomposition</span>
+            <span class="fbody">Splitting one PRD into 6 tickets, the model drops the "what happens when the integration is offline" clause because no single ticket "owns" it. Orphan requirements vanish.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Tone-shift introduces new claims</span>
+            <span class="fbody">Translating engineering language to marketing language, the model adds benefit claims ("instantly!", "seamlessly") not in the source. New marketing claims smuggle in through the translation step.</span>
+          </li>
+          <li>
+            <svg class="fail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span class="fname">Cross-language fidelity loss</span>
+            <span class="fbody">EN PRD → VN ticket flips technical terms inconsistently — sometimes "member," sometimes "thành viên," sometimes "khách hàng." Breaks search and traceability in YouTrack.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel" id="tra-con">
+        <ul class="constraints">
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Preserve every AC verbatim. Do not rephrase. If the source is ambiguous, copy as-is and add <code>[CLARIFY]</code>."</span>
+            <span class="cwhy">Defends paraphrase drift. Ambiguity is the source's problem, not yours to solve in translation.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"After translating, output a back-translation of every AC and diff against the source. Flag any non-identical AC."</span>
+            <span class="cwhy">Forces the invariance check. Makes drift detectable.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Every clause in the source must appear in exactly one output ticket. List orphan clauses at the end."</span>
+            <span class="cwhy">Defends lost edge cases. Decomposition becomes auditable.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Use this glossary for all domain terms. Do not vary."</span>
+            <span class="cwhy">Defends term inconsistency. Critical for cross-language work where YouTrack search depends on consistent vocabulary.</span>
+          </li>
+          <li>
+            <svg class="con-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="crule">"Do not add adjectives, benefits, or claims not in the source."</span>
+            <span class="cwhy">Defends tone-shift hallucination. Translation is invariant; new claims belong in a separate edit pass.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ SOURCES ============ -->
+  <div class="sources-block" id="sources">
+    <h3>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Key sources cited
+    </h3>
+    <ul>
+      <li><b>Sycophancy</b> — <a href="https://arxiv.org/abs/2411.15287" target="_blank" rel="noopener">arxiv 2411.15287</a> · <a href="https://arxiv.org/html/2509.21305v1" target="_blank" rel="noopener">arxiv 2509.21305</a> · <a href="https://aclanthology.org/2025.findings-emnlp.1241.pdf" target="_blank" rel="noopener">EMNLP 2025</a></li>
+      <li><b>LLM as reviewer / code-review failure</b> — <a href="https://arxiv.org/abs/2407.00215" target="_blank" rel="noopener">Saunders et al., OpenAI 2024</a> · <a href="https://arxiv.org/html/2508.12358v1" target="_blank" rel="noopener">arxiv 2508.12358</a> · <a href="https://diffray.ai/blog/llm-hallucinations-code-review/" target="_blank" rel="noopener">diffray.ai</a></li>
+      <li><b>Thematic analysis with LLMs</b> — <a href="https://journals.sagepub.com/doi/10.1177/08944393231220483" target="_blank" rel="noopener">De Paoli, SAGE 2024</a> · <a href="https://arxiv.org/html/2510.18456v1" target="_blank" rel="noopener">arxiv 2510.18456</a> · <a href="https://arxiv.org/html/2511.14528v1" target="_blank" rel="noopener">arxiv 2511.14528</a> · <a href="https://link.springer.com/article/10.1007/s11135-024-01950-6" target="_blank" rel="noopener">Springer</a> · <a href="https://www.eecis.udel.edu/~mlm/docs/2025-Wang-CSCW-LATA-Paper.pdf" target="_blank" rel="noopener">LATA · CSCW 2025</a></li>
+      <li><b>Hallucinated regulations / citations</b> — <a href="https://www.damiencharlotin.com/hallucinations/" target="_blank" rel="noopener">Charlotin database</a></li>
+      <li><b>LLM user-story generation + AC quality</b> — <a href="https://arxiv.org/html/2507.15157v1" target="_blank" rel="noopener">arxiv 2507.15157</a></li>
+      <li><b>Sycophancy in high-stakes Q&amp;A</b> — <a href="https://www.nature.com/articles/s41746-025-02008-z" target="_blank" rel="noopener">npj Digital Medicine 2025</a></li>
+      <li><b>Opinion-convergence / argument-driven flipping</b> — <a href="https://link.springer.com/article/10.1140/epjds/s13688-025-00579-1" target="_blank" rel="noopener">EPJ Data Science 2025</a></li>
+      <li><b>Pre-mortem methodology</b> — Gary Klein, <i>HBR</i> 2007, "Performing a Project Premortem"</li>
+      <li><b>Thematic analysis canon</b> — Braun &amp; Clarke 2006/2019/2022 · Saldaña, <i>Coding Manual for Qualitative Researchers</i></li>
+      <li><b>Inspection canon</b> — Fagan 1976, IBM · DO-178C · IEC 62304</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <span>Workshop · WebMD Health Services Vietnam · 04/05/2026</span>
+    <span>tony · vibery.app</span>
+  </div>
+</div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll(".pattern").forEach(pattern => {
+    const tabs = pattern.querySelectorAll(".tab");
+    const panels = pattern.querySelectorAll(".panel");
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.panel;
+        tabs.forEach(t => t.classList.remove("active"));
+        panels.forEach(p => p.classList.remove("active"));
+        tab.classList.add("active");
+        const panel = pattern.querySelector("#" + target);
+        if (panel) panel.classList.add("active");
+      });
+    });
+  });
+
+  // Copy buttons
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const targetId = btn.dataset.target;
+      const targetEl = document.getElementById(targetId);
+      if (!targetEl) return;
+      const text = targetEl.innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        const original = btn.innerHTML;
+        btn.classList.add("copied");
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Copied';
+        setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.innerHTML = original;
+        }, 1800);
+      } catch (e) {
+        btn.textContent = "(select + copy)";
+      }
+    });
+  });
+</script>
+</body>
+</html>

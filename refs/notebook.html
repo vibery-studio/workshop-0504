@@ -47,12 +47,9 @@
   }
 
   .grid {
-    display: grid; gap: 26px;
+    display: grid; gap: 32px;
     grid-template-columns: 1fr;
-    margin-top: 8px;
-  }
-  @media (min-width: 720px) {
-    .grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+    max-width: 720px; margin: 8px auto 0;
   }
 
   .panel {
@@ -101,7 +98,7 @@
   @media print {
     body { padding: 24px; background: white; }
     .panel { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
-    .grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid { grid-template-columns: 1fr; gap: 18px; max-width: none; }
   }
 </style>
 </head>

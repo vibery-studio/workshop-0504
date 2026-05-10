@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Install me + task-extractor · Monday-morning recap</title>
+<meta name="description" content="How to install the two starter skills on Claude.ai web, Claude Desktop, Claude Code CLI, or Cowork. Pick your surface, follow the steps." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --dark: #141413; --light: #faf9f5; --mid: #b0aea5; --light-gray: #e8e6dc;
+    --teal: #3BC6D9; --teal-deep: #1B7A8A;
+    --navy: #1E2A78; --orange: #d97757; --green: #788c5d;
+    --font-head: "Be Vietnam Pro", system-ui, sans-serif;
+    --font-body: "Lora", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--light); color: var(--dark); line-height: 1.65; -webkit-font-smoothing: antialiased; padding: 48px 5vw 64px; }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  header { margin-bottom: 36px; }
+  .kicker { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal-deep); margin-bottom: 14px; }
+  h1 { font-family: var(--font-head); font-weight: 700; font-size: clamp(1.9rem, 4.4vw, 2.6rem); line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.02em; }
+  h1 .mark { color: var(--teal-deep); font-style: italic; font-family: var(--font-body); font-weight: 400; }
+  .sub { font-family: var(--font-body); font-style: italic; font-size: 1.08rem; opacity: 0.72; max-width: 700px; }
+  .meta { font-family: var(--font-mono); font-size: 11px; opacity: 0.5; margin-top: 12px; }
+  h2 { font-family: var(--font-head); font-size: 1.55rem; font-weight: 700; margin: 56px 0 18px; letter-spacing: -0.01em; padding-bottom: 8px; border-bottom: 2px solid var(--teal-deep); }
+  h2 .num { font-family: var(--font-mono); font-size: 0.8em; color: var(--teal-deep); margin-right: 10px; opacity: 0.85; }
+  h3 { font-family: var(--font-head); font-size: 1.15rem; font-weight: 600; margin: 32px 0 10px; }
+  h3::before { content: ""; display: inline-block; width: 22px; height: 2px; background: var(--teal-deep); vertical-align: middle; margin-right: 10px; transform: translateY(-3px); }
+  p, li { font-size: 1.02rem; }
+  ol, ul { padding-left: 22px; }
+  ol li { margin-bottom: 12px; }
+  ol li::marker { font-family: var(--font-mono); font-weight: 600; color: var(--teal-deep); }
+  code { font-family: var(--font-mono); font-size: 0.92em; background: var(--light-gray); padding: 1px 6px; border-radius: 3px; }
+  pre { font-family: var(--font-mono); font-size: 0.86rem; background: #1f1d1c; color: #e8e6dc; padding: 18px 20px; border-radius: 6px; overflow-x: auto; line-height: 1.55; }
+  pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+  .lede { font-size: 1.1rem; line-height: 1.6; padding: 18px 22px; background: rgba(59,198,217,0.08); border-left: 4px solid var(--teal-deep); border-radius: 4px; margin: 22px 0; }
+  .lede strong { color: var(--teal-deep); }
+  .gotcha { font-size: 1rem; padding: 16px 20px; background: rgba(217,119,87,0.08); border-left: 4px solid var(--orange); border-radius: 4px; margin: 22px 0; }
+  .gotcha strong { color: var(--orange); }
+  .tip { font-size: 1rem; padding: 16px 20px; background: rgba(120,140,93,0.08); border-left: 4px solid var(--green); border-radius: 4px; margin: 22px 0; }
+  .tip strong { color: var(--green); }
+  .picker { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 18px 0 8px; }
+  .picker a { display: block; padding: 16px 18px; background: var(--light-gray); border-radius: 8px; text-decoration: none; color: var(--dark); border: 2px solid transparent; transition: all 0.12s; }
+  .picker a:hover { border-color: var(--teal-deep); background: #fff; }
+  .picker .surface { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-deep); margin-bottom: 6px; }
+  .picker .who { font-family: var(--font-head); font-size: 1rem; font-weight: 600; }
+  .picker .min { font-family: var(--font-body); font-size: 0.9rem; opacity: 0.75; margin-top: 4px; }
+  footer { margin-top: 60px; padding-top: 22px; border-top: 1px solid var(--light-gray); font-size: 0.88rem; opacity: 0.7; }
+  footer a { color: var(--teal-deep); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Setup · Monday-morning recap</div>
+    <h1>Install <span class="mark">me</span> + <span class="mark">task-extractor</span></h1>
+    <p class="sub">Two starter skills, four ways to install. Pick your surface and follow the steps. Most people: 4 minutes.</p>
+    <div class="meta">Workshop session 2 · 11/05/2026 · WebMD HS Vietnam</div>
+  </header>
+
+  <div class="lede">
+    <strong>What you're installing:</strong> two markdown-only skills that load <em>who you are</em> (<code>me</code>) and <em>what you do</em> (<code>task-extractor</code>) into Claude. Both live as folders with <code>SKILL.md</code> at the root. Source repo:
+    <a href="https://github.com/bnqtoan/claudekit" target="_blank" rel="noopener">github.com/bnqtoan/claudekit</a>.
+  </div>
+
+  <h2><span class="num">00</span>Pick your surface</h2>
+  <div class="picker">
+    <a href="#web"><div class="surface">claude.ai web</div><div class="who">Pro / Max / Team plan</div><div class="min">~4 min · upload ZIP</div></a>
+    <a href="#desktop"><div class="surface">Claude Desktop</div><div class="who">macOS / Windows app</div><div class="min">~4 min · same as web</div></a>
+    <a href="#cli"><div class="surface">Claude Code CLI</div><div class="who">Terminal users</div><div class="min">~2 min · git clone</div></a>
+    <a href="#cowork"><div class="surface">Cowork</div><div class="who">Web app, no install</div><div class="min">~3 min · upload ZIP</div></a>
+  </div>
+
+  <h2 id="web"><span class="num">01</span>Claude.ai web (most attendees)</h2>
+
+  <p>For everyone on Claude Pro / Max / Team — this is the path.</p>
+
+  <h3>Prerequisite: enable Code execution</h3>
+  <ol>
+    <li>Click your profile (top-left) → <strong>Settings</strong>.</li>
+    <li>Open <strong>Capabilities</strong>.</li>
+    <li>Toggle <strong>"Code execution and file creation"</strong> on.</li>
+  </ol>
+  <p><em>Without this, the Skills menu is hidden — most common reason "I don't see Skills."</em></p>
+
+  <h3>Install the two skills</h3>
+  <ol>
+    <li>Download both ZIPs from the workshop release: <code>me.zip</code> and <code>task-extractor.zip</code> (link Tony shares in workshop chat — also from the GitHub repo Releases page).</li>
+    <li>In Claude.ai sidebar → <strong>Customize → Skills</strong>.</li>
+    <li>Click <strong>+</strong> → <strong>Create skill</strong> → <strong>Upload a skill</strong>.</li>
+    <li>Select <code>me.zip</code>. Wait ~5 sec for processing.</li>
+    <li>Toggle the skill <strong>on</strong>.</li>
+    <li>Repeat for <code>task-extractor.zip</code>.</li>
+    <li>Open a new chat and type <code>/me</code> — the skill should fire.</li>
+  </ol>
+
+  <div class="gotcha">
+    <strong>Gotcha:</strong> The ZIP must contain a folder with <code>SKILL.md</code> at its <em>root</em>, not nested one extra level. If upload fails or skill doesn't trigger, re-zip so the structure is <code>me/SKILL.md</code> (not <code>me/me/SKILL.md</code>). This is the #1 install failure.
+  </div>
+
+  <h2 id="desktop"><span class="num">02</span>Claude Desktop (macOS / Windows)</h2>
+
+  <p>Claude Desktop is a wrapper around the web app — same install flow.</p>
+  <ol>
+    <li>Open Claude Desktop.</li>
+    <li><strong>Settings → Capabilities</strong> → enable <strong>"Code execution and file creation"</strong>.</li>
+    <li><strong>Settings → Customize → Skills</strong> → <strong>+ Create skill → Upload a skill</strong>.</li>
+    <li>Upload <code>me.zip</code>, then <code>task-extractor.zip</code>. Toggle each on.</li>
+  </ol>
+
+  <h2 id="cli"><span class="num">03</span>Claude Code CLI (terminal users)</h2>
+
+  <p>Skills live as folders in your home directory. Three install paths.</p>
+
+  <h3>Path A — Single copy-paste (recommended)</h3>
+<pre><code>git clone --depth 1 https://github.com/bnqtoan/claudekit.git /tmp/ck && \
+  cp -r /tmp/ck/skills/me ~/.claude/skills/me && \
+  cp -r /tmp/ck/skills/task-extractor ~/.claude/skills/task-extractor && \
+  rm -rf /tmp/ck</code></pre>
+  <p>Restart your Claude Code session — skills auto-discovered.</p>
+
+  <h3>Path B — Plugin marketplace (cleanest one-liner)</h3>
+<pre><code>/plugin marketplace add bnqtoan/claudekit
+/plugin install me
+/plugin install task-extractor</code></pre>
+  <p>Run inside a Claude Code session. Marketplace flow handles updates too.</p>
+
+  <h3>Path C — Manual ZIP unzip</h3>
+<pre><code>unzip me.zip -d ~/.claude/skills/
+unzip task-extractor.zip -d ~/.claude/skills/</code></pre>
+
+  <div class="tip">
+    <strong>Personal vs project:</strong> <code>~/.claude/skills/</code> = available everywhere (personal). <code>.claude/skills/</code> in a project root = available only in that project (handy for team-shared skills via Git).
+  </div>
+
+  <h2 id="cowork"><span class="num">04</span>Cowork</h2>
+
+  <p>Same ZIP flow as web, with a richer marketplace UI.</p>
+  <ol>
+    <li>Open Cowork → <strong>Settings → Customize → Skills</strong>.</li>
+    <li>Either <strong>Browse</strong> (org marketplace if your admin published the skills) or <strong>Upload</strong> (custom ZIP).</li>
+    <li>Upload <code>me.zip</code>, then <code>task-extractor.zip</code>. Toggle on.</li>
+    <li>Bonus: in any chat, run <code>/skill-creator</code> to spin up new skills without leaving Cowork.</li>
+  </ol>
+
+  <h2><span class="num">05</span>Verify it worked</h2>
+  <ol>
+    <li>Start a new chat.</li>
+    <li>Type <em>"build my me.md"</em> or <code>/me</code>.</li>
+    <li>The skill should ask you 7 questions (role, audience, vocab, etc.) and write a <code>me.md</code>.</li>
+    <li>Same for <code>/task-extractor</code> — should ask about ONE task and write <code>task.md</code>.</li>
+  </ol>
+  <p>If neither fires: skill is uploaded but disabled. Toggle on. If still nothing: ZIP structure wrong (see Gotcha above).</p>
+
+  <h2><span class="num">06</span>Where the files end up</h2>
+  <ul>
+    <li><strong>claude.ai / Desktop / Cowork:</strong> stored server-side, attached to your account. Output <code>me.md</code> appears in the chat — copy it into your Claude Project as a knowledge file so it loads automatically across every chat in that project.</li>
+    <li><strong>Claude Code CLI:</strong> output written to <code>~/.claude/me.md</code> directly. Loaded automatically.</li>
+  </ul>
+
+  <footer>
+    Sources:
+    <a href="https://code.claude.com/docs/en/skills">Claude Code skills docs</a> ·
+    <a href="https://support.claude.com/en/articles/12512180-use-skills-in-claude">Use Skills in Claude</a> ·
+    <a href="https://support.claude.com/en/articles/12512198-how-to-create-custom-skills">How to create custom Skills</a> ·
+    <a href="https://github.com/anthropics/skills">anthropics/skills (reference)</a>
+    <br/>
+    Verified May 10, 2026.
+  </footer>
+</div>
+</body>
+</html>

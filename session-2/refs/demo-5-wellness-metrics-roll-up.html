@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Demo 5 — Wellness metrics weekly roll-up · Monday-morning recap</title>
+<meta name="description" content="You saw the demo. Here's how to recreate it Monday. Skill + Sheets + Notion + hosted Routine — laptop closed, $0 infra, ~25 min setup." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --dark: #141413; --light: #faf9f5; --mid: #b0aea5; --light-gray: #e8e6dc;
+    --teal: #3BC6D9; --teal-deep: #1B7A8A;
+    --navy: #1E2A78; --orange: #d97757; --green: #788c5d;
+    --font-head: "Be Vietnam Pro", system-ui, sans-serif;
+    --font-body: "Lora", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--light); color: var(--dark); line-height: 1.65; -webkit-font-smoothing: antialiased; padding: 48px 5vw 64px; }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  header { margin-bottom: 36px; }
+  .kicker { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal-deep); margin-bottom: 14px; }
+  h1 { font-family: var(--font-head); font-weight: 700; font-size: clamp(1.9rem, 4.4vw, 2.6rem); line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.02em; }
+  h1 .mark { color: var(--teal-deep); font-style: italic; font-family: var(--font-body); font-weight: 400; }
+  .sub { font-family: var(--font-body); font-style: italic; font-size: 1.08rem; opacity: 0.72; max-width: 720px; }
+  .meta { font-family: var(--font-mono); font-size: 11px; opacity: 0.5; margin-top: 12px; }
+  h2 { font-family: var(--font-head); font-size: 1.35rem; font-weight: 600; margin: 40px 0 14px; letter-spacing: -0.01em; }
+  h2::before { content: ""; display: inline-block; width: 28px; height: 2px; background: var(--teal-deep); vertical-align: middle; margin-right: 12px; transform: translateY(-3px); }
+  h3 { font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+  p, li { font-size: 1.02rem; }
+  ol, ul { padding-left: 22px; }
+  ol li { margin-bottom: 12px; }
+  ol li::marker { font-family: var(--font-mono); font-weight: 600; color: var(--teal-deep); }
+  code { font-family: var(--font-mono); font-size: 0.92em; background: var(--light-gray); padding: 1px 6px; border-radius: 3px; }
+  pre { font-family: var(--font-mono); font-size: 0.86rem; background: #1f1d1c; color: #e8e6dc; padding: 18px 20px; border-radius: 6px; overflow-x: auto; line-height: 1.55; }
+  pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+  .lede { font-size: 1.1rem; line-height: 1.6; padding: 18px 22px; background: rgba(59,198,217,0.08); border-left: 4px solid var(--teal-deep); border-radius: 4px; margin: 22px 0; }
+  .lede strong { color: var(--teal-deep); }
+  .gotcha { font-size: 1rem; padding: 16px 20px; background: rgba(217,119,87,0.08); border-left: 4px solid var(--orange); border-radius: 4px; margin: 22px 0; }
+  .gotcha strong { color: var(--orange); }
+  .honest { font-size: 1rem; padding: 16px 20px; background: rgba(120,140,93,0.08); border-left: 4px solid var(--green); border-radius: 4px; margin: 22px 0; }
+  .honest strong { color: var(--green); }
+  .stack { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 18px 0 8px; }
+  .stack-card { padding: 14px 16px; background: var(--light-gray); border-radius: 6px; }
+  .stack-card .label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-deep); margin-bottom: 6px; }
+  .stack-card .val { font-family: var(--font-head); font-size: 0.96rem; font-weight: 600; }
+  table.contrast { width: 100%; border-collapse: collapse; margin: 14px 0 20px; font-size: 0.96rem; }
+  table.contrast th, table.contrast td { padding: 10px 12px; border-bottom: 1px solid var(--light-gray); text-align: left; vertical-align: top; }
+  table.contrast th { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-deep); }
+  footer { margin-top: 60px; padding-top: 22px; border-top: 1px solid var(--light-gray); font-size: 0.88rem; opacity: 0.7; }
+  footer a { color: var(--teal-deep); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Demo 5 · Monday-morning recap</div>
+    <h1>Wellness metrics roll-up — <span class="mark">hosted Routine, laptop closed</span></h1>
+    <p class="sub">Multiple Google Sheets → one Notion exec page, every Monday at 7am ICT. Anthropic-hosted. Zero infrastructure. About 25 minutes to set up. The "one day Demo 4 lands here" demo.</p>
+    <div class="meta">Workshop session 2 · 11/05/2026 · WebMD HS Vietnam</div>
+  </header>
+
+  <div class="lede">
+    <strong>Why it matters:</strong> this is what hosted Routines were built for. Both connectors are OAuth-based and Routines-native. Nothing runs on your machine. You can be on a flight when 7am hits and the brief still lands.
+  </div>
+
+  <h2>Stack</h2>
+  <div class="stack">
+    <div class="stack-card"><div class="label">Surface</div><div class="val">claude.ai/code Routines</div></div>
+    <div class="stack-card"><div class="label">Schedule</div><div class="val">cron <code>0 7 * * 1</code> ICT</div></div>
+    <div class="stack-card"><div class="label">Connectors</div><div class="val">Google Sheets · Notion</div></div>
+    <div class="stack-card"><div class="label">Output</div><div class="val">Notion exec page (weekly)</div></div>
+  </div>
+
+  <h2>Contrast with Demo 4</h2>
+  <table class="contrast">
+    <thead><tr><th></th><th>Demo 4 — VoE</th><th>Demo 5 — Wellness roll-up</th></tr></thead>
+    <tbody>
+      <tr><td>Connectors</td><td>YouTrack (token), Slack, Sheets</td><td>Notion (OAuth), Sheets (OAuth)</td></tr>
+      <tr><td>Runner</td><td>Local cron / launchd</td><td>Anthropic-hosted Routine</td></tr>
+      <tr><td>Laptop</td><td>Must be on at 5am</td><td>Closed — runs in cloud</td></tr>
+      <tr><td>Infra cost</td><td>$0 (your machine)</td><td>$0 (Anthropic's machine)</td></tr>
+      <tr><td>Why this split?</td><td>YouTrack MCP needs OAuth (<a href="https://youtrack.jetbrains.com/projects/JT/issues/JT-94027/YouTrack-MCP-with-OAuth" target="_blank" rel="noopener">JT-94027</a>)</td><td>Both connectors are OAuth today</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Prerequisites</h2>
+  <ul>
+    <li>Claude Pro / Max / Team / Enterprise plan with Claude Code on the web enabled</li>
+    <li>Daily run quota: Pro 5 / Max 15 / Team-Enterprise 25 (per user, all routines combined)</li>
+    <li>Connectors authorized in <code>claude.ai → Customize → Connectors</code>:
+      <ul>
+        <li><strong>Google Sheets</strong> — OAuth via Google, read on your operational sheets</li>
+        <li><strong>Notion</strong> — OAuth via Notion, write access to your wellness/exec workspace</li>
+      </ul>
+    </li>
+    <li>4–5 operational Sheets that the brief reads from (signups, NPS, completions, churn, MAU — whatever your team tracks)</li>
+    <li>One Notion page where the brief gets posted (e.g. <em>"Wellness — Weekly Brief"</em>)</li>
+  </ul>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Authorize both connectors in <code>claude.ai → Customize → Connectors</code>. Each opens a normal OAuth browser flow.</li>
+    <li>List your operational Sheets in one place — title, URL, what it tracks. Save this list as a small Notion page or a master sheet. The Routine reads this manifest first.</li>
+    <li>Create the destination Notion page. Title <em>"Wellness — Weekly Brief"</em>. Empty for now.</li>
+    <li>Go to <code>claude.ai/code → Routines → New routine</code>. Name it <em>"Monday Wellness Brief"</em>.</li>
+    <li>Trigger: Scheduled. Pick the <em>"weekly"</em> preset, set time to <code>07:00 Monday Asia/Ho_Chi_Minh</code>.</li>
+    <li>Paste the prompt below. Attach both connectors. Save.</li>
+    <li>First run executes immediately as a smoke test. Open the Notion page — there should be a fresh entry with this Monday's date.</li>
+    <li>Logs land in the routine's <em>"Runs"</em> tab — full transcript, tool calls, errors.</li>
+  </ol>
+
+  <h2>The 15-line skill prompt</h2>
+<pre><code>You are a Wellness Program analyst writing a weekly exec brief.
+
+INPUTS — read these Google Sheets (last 7 days):
+1. signups — daily new-user signups
+2. nps — NPS responses with comments
+3. completions — wellness program completion rate
+4. churn — cancellations + reasons
+5. mau — monthly active users trend
+
+OUTPUT — append a section to the Notion page "Wellness — Weekly Brief":
+
+  ## Week of {monday_date}
+  **3 things that moved**
+  - {metric, prior → current, % change, one-line why}
+  - ...
+  **1 risk worth flagging**
+  - {a metric trending the wrong way + the leading indicator}
+  **1 question for the team**
+  - {open question the data raises, addressed to a function — never a person}
+
+RULES:
+- No invented numbers. Drop the bullet if the Sheet doesn't have data.
+- Match the tone: short sentences, no jargon, no "leverage".
+- If any tool call fails, append "[TOOL ERROR: tool_name]" inline.
+- Stop at 200 words.</code></pre>
+
+  <div class="gotcha">
+    <strong>Gotcha:</strong> Notion OAuth scopes are workspace-wide by default — your Routine can read every Notion page you have access to. Lock down the Notion integration to the specific workspace (or even page) to avoid accidental data leaks. Same for Sheets — scope to a folder, not your whole Drive.
+  </div>
+
+  <div class="honest">
+    <strong>Honest framing:</strong> still not an agent. Fixed prompt, fixed schedule, fixed connectors. The model only does the judgmental part — picking which 3 metrics moved most, writing the "risk worth flagging" line. Reading 5 Sheets and writing to Notion is deterministic plumbing.
+  </div>
+
+  <h2>If you get it wrong on Monday</h2>
+  <ul>
+    <li><strong>Notion page has duplicate sections every run</strong> → prompt says "append" but routine can re-fire. Add: "If a section for this Monday already exists, replace it."</li>
+    <li><strong>Routine pulls wrong Sheets</strong> → manifest list is in your prompt by URL, but you renamed a Sheet. Use Sheet IDs (the long string in the URL) instead of names.</li>
+    <li><strong>Quota exceeded mid-week</strong> → Pro is 5 runs/day across ALL routines. Move to Max if you have ~3+ routines.</li>
+    <li><strong>OAuth expired silently</strong> → re-auth in Customize → Connectors. Routines don't surface auth-expired errors prominently; check the Runs tab.</li>
+    <li><strong>Brief is too long / generic</strong> → add an example brief at the bottom of the prompt. Routines respect format examples better than rules.</li>
+  </ul>
+
+  <h2>Variations to try once it works</h2>
+  <ul>
+    <li>Switch to <strong>Slack output</strong> — same data, posted to <code>#exec-wellness</code> instead of Notion.</li>
+    <li>Add <strong>HubSpot</strong> connector — pull pipeline metrics into the brief.</li>
+    <li>Run <strong>daily instead of weekly</strong> — change cron to <code>0 7 * * 1-5</code>, drop the brief into a daily-rolling Notion page.</li>
+    <li>Add a <strong>quarterly retrospective</strong> Routine — same skill, different schedule, different output page.</li>
+  </ul>
+
+  <footer>
+    Sources:
+    <a href="https://claude.com/blog/introducing-routines-in-claude-code">Anthropic — Introducing routines in Claude Code</a> ·
+    <a href="https://code.claude.com/docs/en/routines">Routines docs</a> ·
+    <a href="https://claude.com/resources/use-cases/build-a-daily-briefing-across-your-tools">Daily briefing use case</a>
+    <br/>
+    Verified May 10, 2026.
+  </footer>
+</div>
+</body>
+</html>

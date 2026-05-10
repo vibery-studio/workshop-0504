@@ -1,0 +1,1480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AI Orchestration for Product Teams · Session 2 · WebMD HS Vietnam</title>
+<meta name="description" content="Workshop slides: from prompt to skill — build, score, and ship a working skill in 180 minutes." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Caveat:wght@500;700&family=Patrick+Hand&family=Architects+Daughter&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  /* ----- Forked palette from Session 1, recolored for WebMD HS (teal + navy, NO red) ----- */
+  :root {
+    --dark: #141413;
+    --light: #faf9f5;            /* cream Moleskine paper */
+    --paper: #f5efe0;            /* deeper cream */
+    --mid: #b0aea5;
+    --light-gray: #e8e6dc;
+    --teal: #3bc6d9;             /* WebMD HS accent (cyan/teal) */
+    --teal-deep: #2aa3b5;
+    --navy: #1e2a78;             /* WebMD HS navy */
+    --orange: #d97757;           /* kept only as soft accent for stage cues */
+    --green: #788c5d;
+    --yellow: #d4a84b;
+
+    --font-head: "Be Vietnam Pro", "Poppins", system-ui, sans-serif;
+    --font-body: "Lora", "Be Vietnam Pro", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-hand: "Caveat", "Patrick Hand", "Architects Daughter", cursive;
+
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--light); color: var(--dark);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    /* faint Moleskine paper grain */
+    background-image:
+      radial-gradient(rgba(20,20,19,0.025) 1px, transparent 1px),
+      radial-gradient(rgba(20,20,19,0.018) 1px, transparent 1px);
+    background-size: 22px 22px, 36px 36px;
+    background-position: 0 0, 11px 18px;
+  }
+
+  .deck {
+    scroll-snap-type: y mandatory;
+    overflow-y: auto;
+    height: 100vh;
+  }
+  .slide {
+    scroll-snap-align: start;
+    min-height: 100vh;
+    padding: 72px 5vw 72px;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative;
+    border-bottom: 1px solid var(--light-gray);
+  }
+  .slide.dark {
+    background: var(--dark); color: var(--light);
+    border-bottom-color: rgba(255,255,255,0.08);
+  }
+  .slide .wrap { max-width: 1180px; margin: 0 auto; width: 100%;
+    display: flex; flex-direction: column; }
+
+  /* slide number — top-right, small, muted (per spec) */
+  .slide-num {
+    position: absolute; top: 24px; right: 5vw;
+    font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+    color: var(--dark); opacity: 0.4; letter-spacing: 0.08em;
+  }
+  .slide.dark .slide-num { color: var(--mid); opacity: 0.7; }
+
+  .slide-kicker {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--teal-deep); margin-bottom: 16px;
+  }
+
+  /* Headlines — hand-drawn weight, teal accent */
+  .slide h1 {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    letter-spacing: -0.03em; line-height: 1.06;
+    margin: 0 0 22px;
+  }
+  .slide h1.hand { font-family: var(--font-hand); font-weight: 700; letter-spacing: 0; line-height: 1.0; }
+
+  .slide h2 {
+    font-family: var(--font-head); font-weight: 600;
+    font-size: clamp(1.5rem, 2.6vw, 2.0rem);
+    letter-spacing: -0.02em; line-height: 1.2;
+    margin: 28px 0 14px;
+  }
+  .slide .lede {
+    font-family: var(--font-body); font-size: 1.4rem; /* 22pt min for body */
+    max-width: 920px; opacity: 0.92; margin: 0 0 24px;
+  }
+  .slide .lede.big { font-size: 1.55rem; max-width: 980px; }
+
+  /* === KEY ACCENT CLASSES === */
+  /* Teal underline — single key word per slide */
+  .teal-underline {
+    text-decoration: underline;
+    text-decoration-color: var(--teal);
+    text-decoration-thickness: 6px;
+    text-underline-offset: 4px;
+    text-decoration-skip-ink: none;
+  }
+  /* Navy emphasis — for circled/strong words */
+  .navy-emphasis {
+    color: var(--navy);
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    padding: 0 6px;
+  }
+  .navy-emphasis::after {
+    content: "";
+    position: absolute; left: -4px; right: -4px; top: -6px; bottom: -6px;
+    border: 2.5px solid var(--navy);
+    border-radius: 50%;
+    transform: rotate(-2deg);
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
+  /* === BIG QUOTE === */
+  .bigquote {
+    font-family: var(--font-hand);
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.15;
+    color: var(--dark);
+    max-width: 980px;
+    margin: 0 auto 24px;
+    text-align: center;
+    padding: 12px 0;
+  }
+  .bigquote .attrib {
+    display: block;
+    font-family: var(--font-body); font-style: italic;
+    font-size: 1.1rem; opacity: 0.7; margin-top: 22px; letter-spacing: 0.01em;
+  }
+
+  /* === IMAGE PLACEHOLDER === */
+  /* DEFAULT placeholder = 16:9 portrait area (matches typical generated image)
+     ALL placeholders enforce an aspect ratio so images drop in without breaking layout.
+     Override classes for known-different image shapes. */
+  .image-placeholder {
+    border: 2px dashed var(--teal-deep);
+    background: rgba(59,198,217,0.06);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin: 18px 0;
+    display: flex; flex-direction: column; gap: 10px;
+    align-items: stretch; justify-content: center;
+    aspect-ratio: 16 / 9;       /* default — matches Codex landscape output */
+    width: 100%;
+    max-width: 1100px;
+    overflow: hidden;            /* placeholder text won't push the box bigger */
+    position: relative;
+  }
+  /* When images replace the placeholder content: img fills the box, never distorts */
+  .image-placeholder img,
+  .image-placeholder svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;          /* never crop; never distort */
+    object-position: center;
+  }
+  /* Once an image is present, drop the dashed-box treatment + hide prompt scaffolding */
+  .image-placeholder:has(img) {
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+  .image-placeholder:has(img) .placeholder-label,
+  .image-placeholder:has(img) .placeholder-prompt,
+  .image-placeholder:has(img) .placeholder-icon {
+    display: none;
+  }
+  /* Aspect overrides for known different shapes */
+  .image-placeholder.aspect-16x9 { aspect-ratio: 16 / 9; }
+  .image-placeholder.aspect-4x3  { aspect-ratio: 4 / 3; }
+  .image-placeholder.aspect-3x4  { aspect-ratio: 3 / 4; }   /* portrait — quote slides, single icons */
+  .image-placeholder.aspect-1x1  { aspect-ratio: 1 / 1; }   /* square — small icon-style */
+  .image-placeholder.aspect-21x9 { aspect-ratio: 21 / 9; }  /* ultrawide — 3-column compares */
+  /* `.small` keeps the small icon-style placeholders compact + square-ish */
+  .image-placeholder.small {
+    aspect-ratio: 4 / 3;
+    max-width: 520px;
+    padding: 14px 18px;
+  }
+  /* When the placeholder text gets long enough to overflow the aspect-locked box,
+     hide the prompt body but keep the label visible. Editor still has it via inspect. */
+  .image-placeholder .placeholder-prompt {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+  }
+  .image-placeholder .placeholder-label {
+    font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+    letter-spacing: 0.08em; color: var(--teal-deep);
+    text-transform: uppercase;
+  }
+  .image-placeholder .placeholder-prompt {
+    font-family: var(--font-body); font-style: italic;
+    font-size: 13.5px; line-height: 1.55;
+    color: var(--dark); opacity: 0.7;
+    max-width: 880px;
+  }
+  .image-placeholder .placeholder-icon {
+    font-family: var(--font-hand); font-size: 64px;
+    color: var(--teal); opacity: 0.55; line-height: 1;
+  }
+
+  /* === SIDE-BY-SIDE COMPARE (2 col) === */
+  .cmp2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 20px 0; align-items: stretch; }
+  .cmp2 .col {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-top: 4px solid var(--teal);
+    border-radius: var(--radius); padding: 24px 26px;
+  }
+  .cmp2 .col.alt { border-top-color: var(--navy); }
+  .cmp2 .col h3 { font-family: var(--font-head); font-weight: 600; font-size: 1.3rem; margin: 0 0 12px; }
+  .cmp2 .col p { font-size: 1.05rem; line-height: 1.55; opacity: 0.88; }
+  .cmp2 .col .cap { font-family: var(--font-hand); font-size: 1.3rem; color: var(--teal-deep); margin-top: 14px; }
+
+  /* === 3-COL COMPARE === */
+  .cmp3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin: 20px 0; align-items: stretch; }
+  .cmp3 .col {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-top: 4px solid var(--mid);
+    border-radius: var(--radius); padding: 22px 22px;
+  }
+  .cmp3 .col.real { border-top-color: var(--mid); }
+  .cmp3 .col.skill { border-top-color: var(--teal); background: rgba(59,198,217,0.05); }
+  .cmp3 .col.big { border-top-color: var(--navy); }
+  .cmp3 .col h3 { font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; margin: 0 0 10px; }
+  .cmp3 .col ul { padding-left: 18px; margin: 8px 0 0; font-size: 14.5px; line-height: 1.55; }
+  .cmp3 .col ul li { margin: 5px 0; }
+  .cmp3 .col .foot { font-family: var(--font-hand); font-size: 1.2rem; color: var(--navy); margin-top: 14px; }
+
+  /* === DEMO FRAME === */
+  .demo-frame {
+    border: 3px solid var(--teal-deep);
+    border-radius: var(--radius);
+    padding: 64px 40px;
+    text-align: center;
+    background: #fff;
+    margin: 24px 0;
+    min-height: 380px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    gap: 18px;
+  }
+  .demo-frame .live-tag {
+    font-family: var(--font-mono); font-size: 14px; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal-deep);
+    background: rgba(59,198,217,0.1);
+    padding: 6px 16px; border-radius: 20px;
+  }
+  .demo-frame h2 { font-family: var(--font-hand); font-size: clamp(3rem, 6vw, 5rem); margin: 0; color: var(--dark); }
+  .demo-frame .sub { font-family: var(--font-body); font-size: 1.2rem; opacity: 0.75; max-width: 640px; }
+
+  /* === ACTIVITY (timer) === */
+  .activity {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .activity .timer {
+    font-family: var(--font-mono); font-weight: 600;
+    font-size: clamp(5rem, 14vw, 11rem);
+    color: var(--teal-deep);
+    line-height: 1; letter-spacing: -0.04em;
+    margin: 0 0 18px;
+  }
+  .activity .instr {
+    font-family: var(--font-hand);
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    color: var(--dark);
+    max-width: 880px; margin: 0 auto;
+    line-height: 1.2;
+  }
+
+  /* === 2x2 grid (slide 15) === */
+  .grid-2x2 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    margin: 20px 0;
+  }
+  .grid-2x2 .quad {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-radius: var(--radius); padding: 22px 22px;
+    border-left: 4px solid var(--teal);
+  }
+  .grid-2x2 .quad .label {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.1em; color: var(--teal-deep); text-transform: uppercase;
+  }
+  .grid-2x2 .quad h4 { font-family: var(--font-head); font-weight: 600; font-size: 1.1rem; margin: 6px 0 8px; }
+  .grid-2x2 .quad p { font-size: 0.95rem; line-height: 1.55; opacity: 0.85; margin: 0; }
+
+  /* === 4 doors / 5 doors row === */
+  .doors { display: grid; gap: 14px; margin: 22px 0; }
+  .doors.n4 { grid-template-columns: repeat(4, 1fr); }
+  .doors.n5 { grid-template-columns: repeat(5, 1fr); }
+  .door {
+    background: #fff; border: 2px solid var(--light-gray);
+    border-radius: 8px 8px 14px 14px;
+    padding: 22px 16px; text-align: center;
+    border-top: 4px solid var(--teal);
+    min-height: 140px;
+    display: flex; flex-direction: column; justify-content: center; gap: 8px;
+  }
+  .door .letter { font-family: var(--font-hand); font-size: 2.6rem; color: var(--navy); line-height: 1; }
+  .door .name { font-family: var(--font-head); font-weight: 600; font-size: 14px; }
+  .door .hint { font-family: var(--font-body); font-size: 13px; opacity: 0.75; }
+
+  /* === LADDER (3 tiers) === */
+  .ladder3 { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 14px; align-items: stretch; margin: 28px 0; }
+  .ladder3 .rung {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-radius: 14px; padding: 24px 22px; position: relative;
+    border-top: 4px solid var(--teal);
+  }
+  .ladder3 .rung:nth-child(3) { border-top-color: var(--teal-deep); }
+  .ladder3 .rung:nth-child(5) { border-top-color: var(--navy); }
+  .ladder3 .rung .lvl { font-family: var(--font-mono); font-size: 11px; color: var(--teal-deep); letter-spacing: 0.1em; text-transform: uppercase; }
+  .ladder3 .rung h3 { font-family: var(--font-head); font-weight: 700; font-size: 1.4rem; margin: 4px 0 10px; }
+  .ladder3 .rung p { font-size: 14.5px; line-height: 1.5; opacity: 0.85; margin: 0; }
+  .ladder3 .arr { font-family: var(--font-mono); font-size: 24px; color: var(--teal-deep); align-self: center; font-weight: 600; }
+
+  /* === RECAP 3-icon row === */
+  .recap3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin: 32px 0; }
+  .recap3 .item { text-align: center; padding: 18px 14px; }
+  .recap3 .item .ico { font-family: var(--font-hand); font-size: 4rem; color: var(--teal-deep); line-height: 1; margin-bottom: 8px; }
+  .recap3 .item .lbl { font-family: var(--font-head); font-weight: 600; font-size: 1.05rem; }
+
+  /* === 2-up (slide 7) === */
+  .two-up {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: center;
+    margin: 26px 0;
+  }
+  .two-up .card {
+    background: #fff; border: 1px solid var(--light-gray);
+    border-radius: var(--radius); padding: 28px 24px;
+    text-align: center; border-top: 4px solid var(--teal);
+  }
+  .two-up .card .ico { font-family: var(--font-hand); font-size: 3rem; color: var(--teal-deep); }
+  .two-up .card h4 { font-family: var(--font-head); font-weight: 600; margin: 8px 0 4px; font-size: 1.1rem; }
+  .two-up .card .sub { font-family: var(--font-mono); font-size: 12px; opacity: 0.7; }
+  .two-up .plus { font-family: var(--font-hand); font-size: 3rem; color: var(--teal-deep); }
+  .two-up .merge {
+    background: var(--navy); color: var(--light);
+    grid-column: 1 / -1; margin-top: 14px;
+    padding: 18px 22px; border-radius: var(--radius);
+    text-align: center;
+    font-family: var(--font-hand); font-size: 1.8rem;
+  }
+
+  /* === MATRIX (slide 13) === */
+  .matrix { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14.5px; }
+  .matrix th, .matrix td {
+    padding: 10px 12px; border: 1px solid var(--light-gray); text-align: center;
+    font-family: var(--font-body);
+  }
+  .matrix th {
+    background: rgba(59,198,217,0.08); font-family: var(--font-head); font-weight: 600;
+    color: var(--teal-deep); text-transform: uppercase; font-size: 12px; letter-spacing: 0.06em;
+  }
+  .matrix td:first-child, .matrix th:first-child { text-align: left; font-weight: 500; }
+  .matrix .yes { color: var(--teal-deep); font-weight: 700; }
+  .matrix .no { color: var(--mid); }
+
+  /* === RUBRIC dials (slide 28) === */
+  .dials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 22px 0; }
+  .dial {
+    background: #fff; border: 1px solid var(--light-gray); border-radius: 14px;
+    padding: 20px 18px; text-align: center; border-top: 4px solid var(--teal);
+  }
+  .dial .num { font-family: var(--font-mono); font-size: 11px; color: var(--teal-deep); letter-spacing: 0.1em; }
+  .dial .name { font-family: var(--font-head); font-weight: 600; font-size: 1.05rem; margin: 6px 0; }
+  .dial .scale { font-family: var(--font-hand); font-size: 1.6rem; color: var(--navy); }
+
+  /* === STAGE STRIP (italic, ~12pt, hidden when body.hide-stage) === */
+  .stage-strip {
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px dashed rgba(20,20,19,0.18);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--dark);
+    opacity: 0.55;
+    font-style: italic;
+    letter-spacing: 0.01em;
+    display: flex; gap: 10px; align-items: flex-start;
+    max-width: 920px;
+  }
+  .stage-strip::before {
+    content: "▸";
+    color: var(--teal-deep);
+    font-style: normal; font-weight: 600;
+    flex-shrink: 0; opacity: 0.9;
+  }
+  .stage-strip b { color: var(--teal-deep); font-style: normal; font-weight: 700; }
+  body.hide-stage .stage-strip { display: none !important; }
+
+  /* === PRESENTER BAR === */
+  .bar {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 50;
+    background: rgba(20,20,19,0.92); color: var(--light);
+    backdrop-filter: blur(8px);
+    padding: 8px 16px; border-radius: 30px;
+    font-family: var(--font-head); font-size: 13px;
+    display: flex; gap: 12px; align-items: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  }
+  .bar button {
+    background: transparent; border: 1px solid rgba(255,255,255,0.2);
+    color: var(--light); padding: 4px 12px; border-radius: 18px;
+    font-size: 12.5px; cursor: pointer; font-family: inherit;
+  }
+  .bar button:hover { background: rgba(255,255,255,0.12); }
+  .bar .pg { font-family: var(--font-mono); color: var(--teal); font-size: 12.5px; min-width: 52px; text-align: center; }
+  .bar .mode { font-family: var(--font-mono); font-size: 11px; opacity: 0.7; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,0.08); }
+  .bar.hidden { opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+
+  /* hero */
+  /* Hero (slide 1) — 2-column: copy on the left, image on the right */
+  .hero-stage {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    grid-template-areas:
+      "eyebrow image"
+      "title   image"
+      "lede    image"
+      "meta    image";
+    column-gap: 48px;
+    row-gap: 18px;
+    align-items: start;
+  }
+  .hero-stage .eyebrow { grid-area: eyebrow; font-family: var(--font-mono); font-size: 13.5px; letter-spacing: 0.15em; color: var(--teal-deep); text-transform: uppercase; }
+  .hero-stage h1       { grid-area: title;   font-size: clamp(2.2rem, 4.2vw, 3.6rem); line-height: 1.05; }
+  .hero-stage .lede    { grid-area: lede;    font-size: 1.25rem; }
+  .hero-stage .image-placeholder { grid-area: image; align-self: center; max-width: 100%; }
+  .hero-stage .meta    { grid-area: meta;    display: flex; gap: 24px; flex-wrap: wrap; font-family: var(--font-head); font-size: 14.5px; color: var(--mid); margin-top: 10px; }
+  @media (max-width: 900px) {
+    .hero-stage { grid-template-columns: 1fr; grid-template-areas: "eyebrow" "title" "image" "lede" "meta"; }
+  }
+
+  /* fade-in */
+  @keyframes rise-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  .slide.in-view h1, .slide.in-view .lede, .slide.in-view .bigquote,
+  .slide.in-view .cmp2, .slide.in-view .cmp3, .slide.in-view .image-placeholder,
+  .slide.in-view .demo-frame, .slide.in-view .activity, .slide.in-view .doors,
+  .slide.in-view .grid-2x2, .slide.in-view .ladder3, .slide.in-view .recap3,
+  .slide.in-view .two-up, .slide.in-view .matrix, .slide.in-view .dials {
+    animation: rise-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  }
+  .slide.in-view .lede { animation-delay: 0.08s; }
+
+  /* mobile */
+  @media (max-width: 880px) {
+    .cmp2, .cmp3, .doors.n4, .doors.n5, .grid-2x2, .ladder3, .recap3, .two-up, .dials {
+      grid-template-columns: 1fr !important;
+    }
+    .ladder3 .arr, .two-up .plus { transform: rotate(90deg); margin: 6px 0; }
+  }
+
+  @media print {
+    .stage-strip { display: none !important; }
+    .bar { display: none !important; }
+    .deck { scroll-snap-type: none; height: auto; overflow: visible; }
+    .slide { min-height: auto; page-break-after: always; }
+  }
+
+  /* ===== image-slide: full-bleed image, no competing content ===== */
+  .image-slide .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding: 24px 0;
+  }
+  .full-image {
+    max-width: 100%;
+    max-height: 82vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    margin: 0 auto;
+    box-shadow: 0 4px 24px rgba(30, 42, 120, 0.08);
+    border-radius: 6px;
+  }
+
+
+  /* ===== Thank-you slide ===== */
+  .thanks {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    align-items: center;
+    text-align: center;
+    padding: 40px 0;
+  }
+  .thanks h1.hand { font-size: clamp(3.6rem, 8vw, 7rem); color: var(--navy); margin: 0; }
+  .thanks .lede { max-width: 760px; opacity: 0.78; }
+  .thanks .meta { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.1em; color: var(--mid); text-transform: uppercase; margin-top: 8px; }
+
+
+  /* ===== Grid overview (Esc / G) ===== */
+  .grid-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15, 22, 64, 0.92);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: none;
+    overflow: auto;
+    padding: 36px 4vw 60px;
+  }
+  .grid-overlay.open { display: block; }
+  .grid-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .thumb {
+    background: var(--cream, #faf9f5);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    aspect-ratio: 16/10;
+    overflow: hidden;
+    transition: transform 0.12s, border-color 0.12s;
+  }
+  .thumb:hover { transform: translateY(-2px); border-color: var(--teal-deep, #3BC6D9); }
+  .thumb.active { border-color: var(--teal-deep, #3BC6D9); box-shadow: 0 0 0 3px rgba(59,198,217,0.25); }
+  .thumb-num { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--teal-deep); letter-spacing: 0.08em; }
+  .thumb img { width: 100%; flex: 1; min-height: 0; object-fit: contain; object-position: center; background: var(--cream, #faf9f5); }
+  .thumb-empty { flex: 1; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 18px; font-weight: 600; color: var(--mid, #5b6478); text-align: center; padding: 12px; }
+  .thumb-title { font-family: var(--font-head); font-size: 12.5px; line-height: 1.3; font-weight: 600; color: var(--dark); margin-top: auto; }
+
+
+  /* ===== Kitchen tabs (slide 15) ===== */
+  .kitchen-tabs { width: 100%; max-width: 1100px; margin: 0 auto; }
+  .tab-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .tab-row .tab {
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: rgba(59,198,217,0.08);
+    color: var(--mid, #5b6478);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .tab-row .tab:hover { color: var(--teal-deep, #3BC6D9); }
+  .tab-row .tab.active {
+    background: var(--teal-deep, #3BC6D9);
+    color: #fff;
+    border-color: var(--teal-deep, #3BC6D9);
+  }
+  .kitchen-img { display: none; }
+  .kitchen-img.active { display: block; }
+
+
+  /* ===== Three-up demo-stack visual (slide 28) ===== */
+  .three-up {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 16px;
+    align-items: stretch;
+    margin: 30px auto;
+    max-width: 1100px;
+    width: 100%;
+  }
+  .three-up .card {
+    border: 2px solid var(--teal-deep, #3BC6D9);
+    border-top: 6px solid var(--teal-deep, #3BC6D9);
+    border-radius: 10px;
+    padding: 18px 22px;
+    background: rgba(59,198,217,0.04);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .three-up .card .lvl {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--teal-deep);
+    text-transform: uppercase;
+  }
+  .three-up .card h4 {
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    margin: 0;
+  }
+  .three-up .card p {
+    font-size: 0.95rem;
+    color: var(--mid, #5b6478);
+    margin: 0;
+    line-height: 1.4;
+  }
+  .three-up .plus {
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-hand);
+    font-size: 2.2rem;
+    color: var(--teal-deep);
+  }
+
+
+  /* ===== Thank-you avatar + contact ===== */
+  .thanks-avatar {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--teal-deep, #3BC6D9);
+    margin-bottom: 4px;
+  }
+  .thanks-contact {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .thanks-contact a {
+    color: var(--teal-deep, #3BC6D9);
+    text-decoration: none;
+    border-bottom: 1.5px solid currentColor;
+    padding-bottom: 1px;
+  }
+  .thanks-contact a:hover { color: var(--navy, #1E2A78); }
+  .thanks-contact .dot { color: var(--mid, #5b6478); opacity: 0.6; }
+
+
+  /* ===== Deeplinks chip (recipe card / deep-dive) ===== */
+  .deeplinks {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    align-items: center;
+    margin-top: 22px; padding-top: 16px;
+    border-top: 1px dashed var(--light-gray, #e8e6dc);
+  }
+  .deeplinks .dlabel {
+    font-family: var(--font-head); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--mid, #5b6478); opacity: 0.85;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .deeplinks .dlabel svg { width: 13px; height: 13px; }
+  .deeplinks a.dl {
+    font-family: var(--font-head); font-size: 13px; font-weight: 500;
+    background: #fff; color: var(--dark);
+    border: 1px solid var(--light-gray, #e8e6dc);
+    border-radius: 999px;
+    padding: 6px 14px;
+    text-decoration: none;
+    transition: all 0.12s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .deeplinks a.dl:hover {
+    background: var(--teal-deep, #1B7A8A); color: #fff;
+    border-color: var(--teal-deep, #1B7A8A);
+  }
+
+</style>
+</head>
+<body>
+
+<main class="deck" id="deck">
+
+  <!-- ============ SLIDE 1 · TITLE / HERO ============ -->
+  <!-- type: hero -->
+  <section class="slide" id="slide-1" data-title="Title">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="hero-stage">
+        <span class="eyebrow">Workshop · Session 2 of 2</span>
+        <h1>Build Your Own <span class="teal-underline">Skill</span><br/>— From Task to Running Agent</h1>
+        <p class="lede big">From <i>"a prompt that works"</i> to <i>"a skill my team can run without me."</i></p>
+        <div class="image-placeholder small" data-image-prompt="Hand-drawn 'SKILL' on cream Moleskine page, with curved arrow pointing right, sketchy ink style"><img src="../images/slide-01-hero-skill-arrow.png" alt="Hand-drawn 'SKILL' on cream Moleskine page, with curved arrow pointing right, sketchy ink style" onerror="this.style.display='none'" />
+          <div class="placeholder-label">[Image #1 · Hero — SKILL with arrow]</div>
+          <div class="placeholder-prompt">Hand-drawn 'SKILL' on cream Moleskine page, with curved arrow pointing right, sketchy ink style.</div>
+        </div>
+        <div class="meta">
+          <span>Mon 11/05/2026 · 13:30–16:30</span>
+          <span>3 hours · 10–12 attendees</span>
+          <span>English · WebMD ONE · TINYpulse</span>
+        </div>
+      </div>    </div>
+  </section>
+
+  <!-- ============ SLIDE 2 · RECAP S1 IN 3 ICONS ============ -->
+  <!-- type: visual-recap -->
+  <section class="slide" id="slide-2" data-title="Recap S1">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">60 second recap</div>
+      <h1>What we built <span class="teal-underline">last time</span>.</h1>
+      <img class="full-image" src="../images/slide-02-recap-three-icons.png" alt="Three hand-drawn icons: Brief (clipboard), Iteration (refresh loop), Context Card (ID card)." />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 3 · QUOTE — survey #1 ============ -->
+  <!-- type: quote -->
+  <section class="slide image-slide" id="slide-3" data-title="Quote 1">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <img class="full-image" src="../images/slide-03-quote-bubble-assistant.png" alt="Quote 1" />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 4 · QUOTE — survey #2 ============ -->
+  <!-- type: quote -->
+  <section class="slide image-slide" id="slide-4" data-title="Quote 2">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <img class="full-image" src="../images/slide-04-quote-bubble-skills-agents.png" alt="Quote 2" />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 5 · THE REFRAME — the floor moved up ============ -->
+  <!-- type: side-by-side-compare -->
+  <section class="slide" id="slide-5" data-title="The Reframe">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">The reframe</div>
+      <h1>The <span class="teal-underline">floor</span> moved up.</h1>
+      <img class="full-image" src="../images/slide-05-reframe-floor-moved-up.png" alt="Left: full agent stack (n8n/Dify/LangChain/Zapier). Right: my-task.md with checklist. Start here. Graduate when you actually need to." />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 5b · THE COMPARISON — pick the smallest thing that works ============ -->
+  <!-- type: full-image-3-column-compare -->
+  <section class="slide image-slide" id="slide-6" data-title="3-Column Compare">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <img class="full-image" src="../images/slide-05b-three-column-comparison.png" alt="3-Column Compare" />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 6 · THE "YOU" IN YOUR WORK — WebMD echo ============ -->
+  <!-- type: big-quote -->
+  <section class="slide image-slide" id="slide-7" data-title="You in your work">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <img class="full-image" src="../images/slide-06-webmd-you-in-your-work.png" alt="You in your work" />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 7 · THE TWO STARTER SKILLS ============ -->
+  <!-- type: 2-up-visual -->
+  <section class="slide image-slide" id="slide-8" data-title="Two starter skills">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <img class="full-image" src="../images/slide-07-two-starter-skills-me-task.png" alt="Two starter skills" />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 8 · LIVE DEMO — me + task-extractor ============ -->
+  <!-- type: demo -->
+  <section class="slide" id="slide-9" data-title="Demo me+task">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="demo-frame">
+        <div class="live-tag">● LIVE DEMO</div>
+        <h2>me + task-extractor</h2>
+        <div class="sub">~5 minutes · everyone runs it on their own task · open laptops</div>
+      </div>
+      <div class="deeplinks">
+        <span class="dlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Install guide</span>
+        <a class="dl" href="../refs/install-me-and-task-extractor.html" target="_blank" rel="noopener">4 ways to install · web · Desktop · CLI · Cowork</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 9 · YOUR TURN — 15 min ============ -->
+  <!-- type: activity -->
+  <section class="slide" id="slide-10" data-title="Your turn 1">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="activity">
+        <div class="timer">15:00</div>
+        <div class="instr">Run <span class="teal-underline">/me</span> + <span class="teal-underline">/task-extractor</span><br/>on YOUR task.</div>
+      </div>    </div>
+  </section>
+
+  <!-- ============ NEW SLIDE · ANATOMY OF A SKILL (inserted between old 9 and old 10) ============ -->
+  <!-- type: visual-diagram -->
+  <section class="slide" id="slide-11" data-title="Anatomy of a skill">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">What's inside</div>
+      <h1>Anatomy of a <span class="teal-underline">skill</span>.</h1>
+      <div class="image-placeholder" data-image-prompt="Hand-drawn Moleskine page showing a folder tree: outer folder labeled 'skills/my-task/'. Inside, three children: (1) prominent SKILL.md file with 4 sub-callouts in handwriting — 'frontmatter', 'checklist', 'output schema', 'When NOT to use'; (2) smaller folder 'references/' with 2 file icons inside (examples.md, vocabulary.md), labeled 'optional: lookup data'; (3) smallest folder 'scripts/' with one Python file icon, labeled 'optional: helper'. Caption at bottom in handwriting: *'It's a folder. With markdown.'* Ink on cream, balanced layout."><img src="../images/slide-10-anatomy-of-a-skill.png" alt="Hand-drawn Moleskine page showing a folder tree: outer folder labeled 'skills/my-task/'. Inside, three children: (1) prominent SKILL.md file with 4 sub-callouts in handwriting — 'frontmatter', 'checkl" onerror="this.style.display='none'" />
+        <div class="placeholder-label">[Image · Anatomy of a skill — folder tree]</div>
+        <div class="placeholder-prompt">Folder tree: skills/my-task/ with SKILL.md (frontmatter, checklist, output schema, When NOT to use) + references/ + scripts/. Caption: "It's a folder. With markdown."</div>
+      </div>
+      <p class="lede"><i>It's a folder. With markdown.</i></p>    </div>
+  </section>
+
+  <!-- ============ NEW SLIDE · WHERE THE SKILL LIVES (harness big picture) ============ -->
+  <!-- type: visual-diagram -->
+  <section class="slide" id="slide-12" data-title="Where the skill lives">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">The harness · big picture</div>
+      <h1>Where the skill <span class="teal-underline">lives</span>.</h1>
+      <div class="image-placeholder" data-image-prompt="Hand-drawn Moleskine architecture diagram. Top: a small sketch of Claude (the model) labeled 'stateless'. Arrow down with words 'loads on demand' to a horizontal row of 3 boxes: 'SKILLS (recipes)', 'MCP (tools)', 'HOOKS (rules)'. A bracket below all three says 'all live in ~/.claude/'. Below the bracket: a labeled box 'THE HARNESS — Claude Code or Cowork'. Arrow down to bottom: 'YOUR WORK — cwd, repo, real files'. Headline at top: *'Where the skill lives.'* Ink on cream Moleskine, clean diagram."><img src="../images/slide-11-where-skill-lives-harness.png" alt="Hand-drawn Moleskine architecture diagram. Top: a small sketch of Claude (the model) labeled 'stateless'. Arrow down with words 'loads on demand' to a horizontal row of 3 boxes: 'SKILLS (recipes)', 'M" onerror="this.style.display='none'" />
+        <div class="placeholder-label">[Image · Where the skill lives — harness architecture]</div>
+        <div class="placeholder-prompt">Stateless model → loads SKILLS / MCP / HOOKS from ~/.claude/ → THE HARNESS (Claude Code or Cowork) → YOUR WORK (cwd, repo, real files).</div>
+      </div>
+      <p class="lede"><i>All in ~/.claude/. Loaded by the harness.</i></p>    </div>
+  </section>
+
+  <!-- ============ SLIDE 10 · MODULE 3 HERO — When to automate ============ -->
+  <!-- type: big-question -->
+  <section class="slide" id="slide-13" data-title="When to automate">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Module 3 · The 4-question filter</div>
+      <h1>You have a task.<br/>Should you <span class="teal-underline">automate</span> it?</h1>
+      <div class="image-placeholder" data-image-prompt="Hand-drawn flowchart on Moleskine page, 4 yes/no decision diamonds in a row, each labeled with a question, ink + light yellow highlight, arrows between, sketchy."><img src="../images/slide-12-four-question-filter.png" alt="Hand-drawn flowchart on Moleskine page, 4 yes/no decision diamonds in a row, each labeled with a question, ink + light yellow highlight, arrows between, sketchy." onerror="this.style.display='none'" />
+        <div class="placeholder-label">[Image #10 · 4-question filter flowchart]</div>
+        <div class="placeholder-prompt">Hand-drawn flowchart, 4 yes/no decision diamonds in a row, ink + light yellow highlight, on cream Moleskine.</div>
+      </div>    </div>
+  </section>
+
+  <!-- ============ SLIDE 11 · THE 5TH QUESTION ============ -->
+  <!-- type: reveal -->
+  <section class="slide" id="slide-14" data-title="The 5th question">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Healthcare adds one</div>
+      <h1>Does a <span class="navy-emphasis">regulator</span> <span class="teal-underline">care</span>?</h1>
+      <img class="full-image" src="../images/slide-11b-five-question-filter.png" alt="5-question filter flowchart with regulator diamond added at the end" />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 12 · WHAT YOU'RE WORKING INSIDE — harness as kitchen ============ -->
+  <!-- type: visual-diagram -->
+  <section class="slide" id="slide-15" data-title="The harness">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">The harness · mental model</div>
+      <h1>It's a <span class="teal-underline">kitchen</span>.</h1>
+      <div class="kitchen-tabs" data-active="skill">
+        <div class="tab-row" role="tablist" aria-label="Kitchen view">
+          <button class="tab active" role="tab" data-view="skill">Skill kitchen</button>
+          <button class="tab" role="tab" data-view="agent">Agent kitchen</button>
+        </div>
+        <img class="full-image kitchen-img kitchen-skill active" src="../images/slide-14-harness-as-kitchen-v7.png" alt="Skill kitchen: chef = model, mixer = MCP, recipe book = skills, ticket rail = hooks" />
+        <img class="full-image kitchen-img kitchen-agent" src="../images/slide-17b-ai-agent-kitchen.png" alt="Agent kitchen: same kitchen + agent loop, banquet goal, scratchpad, subagent" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 13 · SURFACE MATRIX (compressed) ============ -->
+  <!-- type: compare-matrix -->
+  <section class="slide" id="slide-16" data-title="MCP anatomy">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">MCP · the machine, up close</div>
+      <h1>MCP — <span class="teal-underline">one protocol</span>, many clients, many APIs.</h1>
+      <img class="full-image" src="../images/slide-16-mcp-anatomy.png" alt="MCP anatomy: Client (Claude Desktop, Code, Cowork, ChatGPT) ↔ MCP Server (the machine, with tools/resources/prompts) ↔ Your API/SaaS (Slack, Notion, GitHub, YouTrack, Sheets). Client speaks MCP, server translates, same server works with any client." />
+    </div>
+  </section>
+
+  <section class="slide" id="slide-17" data-title="Surface matrix">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Surface matrix · which harness for which job</div>
+      <h1>4 harnesses. Pick the <span class="teal-underline">right</span> one.</h1>
+      <table class="matrix">
+        <thead>
+          <tr><th>Capability</th><th>Code CLI</th><th>Cowork</th><th>Web</th><th>Routines</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Files / repo</td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td>MCP tools</td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+          <tr><td>Schedule</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+          <tr><td>Share with team</td><td class="no">—</td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+          <tr><td>Skills (markdown)</td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+          <tr><td>Edit local files</td><td class="yes"><svg xmlns="http://www.w3.org/2000/svg" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        </tbody>
+      </table>    </div>
+  </section>
+
+  <!-- ============ SLIDE 14 · THE 3 TIERS ============ -->
+  <!-- type: visual-ladder -->
+  <section class="slide" id="slide-18" data-title="3 tiers">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">The ladder · three rungs (and one beyond)</div>
+      <h1>Most teams stop at <span class="teal-underline">prompt</span>.</h1>
+      <img class="full-image" src="../images/slide-16-three-tiers-ladder-v2.png" alt="3-rung ladder: Prompt → Skill (today) → Agent. Higher leverage, more autonomy." />
+      <p class="lede" style="text-align:center; margin-top:14px; opacity:0.7;"><i>Beyond Agent: Swarm — many specialists, one orchestrator. <span style="font-family:var(--font-mono); font-size:0.95em;">OpenSwarm</span> when you outgrow one skill.</i></p>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 15 · THE 4 PATHS TO A SKILL ============ -->
+  <!-- type: 2x2-grid -->
+  <section class="slide" id="slide-19" data-title="4 paths">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Four paths · pick yours</div>
+      <h1>Four paths to a <span class="teal-underline">skill</span>.</h1>
+      <img class="full-image" src="../images/slide-17-four-paths-grid.png" alt="Four paths: A task-extractor (you did it 15 min ago), B Cowork Turn-into-skill (one button), C skill-creator (from scratch with structure), D Marketplace (install someone else's, audit it)." />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 16 · CLIFFHANGER — making isn't the skill ============ -->
+  <!-- type: big-quote -->
+  <section class="slide" id="slide-20" data-title="Cliffhanger">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="bigquote">
+        Making one isn't the skill.<br/>
+        <span style="display:inline-block; margin-top:14px;">Knowing if it's any <span class="teal-underline">good</span> is.</span>
+        <span class="attrib">— Tony</span>
+      </div>    </div>
+  </section>
+
+  <!-- ============ PART 2 — slides 17–27 ============ -->
+
+  <!-- ============ SLIDE 17 · PART 2 FRAME — 4 demos = 4 shapes ============ -->
+  <!-- type: visual-map -->
+  <section class="slide" id="slide-21" data-title="Part 2 · 5 shapes">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Part 2 · 60 minutes · 5 demos</div>
+      <h1>Each demo is a different <span class="teal-underline">shape</span>.</h1>
+      <img class="full-image" src="../images/slide-19-four-doors.png" alt="4 doors: 1 skill+MCP (PRD → YouTrack), 2 project+MCP (Design system Q&A), 3 pure skill (1:1 prep), 4 hybrid (Multi-source synth)." />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 18 · DEMO 1 HERO — PRD → YouTrack ============ -->
+  <!-- type: demo-title -->
+  <section class="slide" id="slide-22" data-title="Demo 1 hero">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Demo 1 of 4 · skill + MCP</div>
+      <h1>PRD → <span class="teal-underline">YouTrack</span> tickets.</h1>
+      <p class="lede big">Most surveyed POs put this as their #1 task.</p>
+      <img class="full-image" src="../images/slide-18-youtrack-ticket-icon.png" alt="YouTrack ticket card with ID WEB-1234" />
+      <div class="deeplinks">
+        <span class="dlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Monday-morning recap</span>
+        <a class="dl" href="../refs/demo-1-prd-to-tickets.html" target="_blank" rel="noopener">PRD → YouTrack · 7 steps · ~30 min setup</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 19 · DEMO 1 LIVE ============ -->
+  <!-- type: demo -->
+  <section class="slide" id="slide-23" data-title="Demo 1 LIVE">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="demo-frame">
+        <div class="live-tag">● LIVE DEMO 1</div>
+        <h2>PRD → YouTrack</h2>
+        <div class="sub">Pre-built skill + MCP · Claude Code · ~12 min</div>
+      </div>    </div>
+  </section>
+
+  <!-- ============ SLIDE 20 · WHAT YOU JUST SAW ============ -->
+  <!-- type: recap-visual -->
+  <section class="slide" id="slide-24" data-title="What you just saw">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Recap · Demo 1</div>
+      <h1>Same skill <span class="teal-underline">shape</span>, MCP wired in.</h1>
+      <img class="full-image" src="../images/slide-22-prd-to-tickets-flow.png" alt="3-step flow: PRD doc → skill + MCP → YouTrack tickets" />
+      <p class="lede"><i>Anyone can do this in 30 minutes.</i></p>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 21 · DEMO 2 HERO — Design system Q&A ============ -->
+  <!-- type: demo-title -->
+  <section class="slide" id="slide-25" data-title="Demo 2 hero">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Demo 2 of 4 · project + MCP</div>
+      <h1>Design system <span class="teal-underline">Q&amp;A</span>.</h1>
+      <p class="lede big">When it's Q&amp;A on a corpus, not a transformation.</p>
+      <img class="full-image" src="../images/slide-24-demo2-design-system-qa.png" alt="Design system Q&amp;A: question → Claude Project corpus → cited answer" />
+      <div class="deeplinks">
+        <span class="dlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Monday-morning recap</span>
+        <a class="dl" href="../refs/demo-2-design-system-qa.html" target="_blank" rel="noopener">Design system Q&A · Project + MCP paths</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 22 · DEMO 2 LIVE ============ -->
+  <!-- type: demo -->
+  <section class="slide" id="slide-26" data-title="Demo 2 LIVE">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="demo-frame">
+        <div class="live-tag">● LIVE DEMO 2</div>
+        <h2>Design system Q&amp;A</h2>
+        <div class="sub">Claude Project · ~12 min</div>
+      </div>    </div>
+  </section>
+
+  <!-- ============ SLIDE 23 · DEMO 3 HERO — 1:1 prep ============ -->
+  <!-- type: demo-title -->
+  <section class="slide" id="slide-27" data-title="Demo 3 hero">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Demo 3 of 4 · pure skill (no MCP)</div>
+      <h1>1:1 <span class="teal-underline">prep</span>.</h1>
+      <p class="lede big">The simplest shape — for the people-managers.</p>
+      <img class="full-image" src="../images/slide-26-demo3-one-on-one-prep.png" alt="1:1 prep: calendar event → me.md + prep skill → tailored notes" />
+      <div class="deeplinks">
+        <span class="dlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Monday-morning recap</span>
+        <a class="dl" href="../refs/demo-3-one-on-one-prep.html" target="_blank" rel="noopener">1:1 prep · pure skill · file structure matters</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 24 · DEMO 3 LIVE — and the me.md moment ============ -->
+  <!-- type: demo + callout -->
+  <section class="slide" id="slide-28" data-title="Demo 3 LIVE · the me.md moment">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="demo-frame">
+        <div class="live-tag">● LIVE DEMO 3 · THE MOMENT</div>
+        <h2>1:1 prep — and the <span class="teal-underline" style="text-decoration-thickness:5px;">me.md</span> moment</h2>
+        <div class="sub">Watch for the line that came straight from a sample me.md</div>
+      </div>    </div>
+  </section>
+
+  <!-- ============ SLIDE 25 · DEMO 4 HERO — Multi-source synth + Routine ============ -->
+  <!-- type: demo-title -->
+  <section class="slide" id="slide-29" data-title="Demo 4 hero">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Demo 4 of 4 · skill on a schedule</div>
+      <h1>Voice of <span class="teal-underline">Employee</span> — runs at 5am.</h1>
+      <p class="lede big">Pulse + Slack + YouTrack → one-page digest. Schedule + skill + 3 MCPs.</p>
+      <div class="three-up">
+        <div class="card"><div class="lvl">MCP</div><h4>3 connectors</h4><p>Sheets · Slack · YouTrack</p></div>
+        <div class="plus">+</div>
+        <div class="card"><div class="lvl">Schedule</div><h4 style="font-family:var(--font-mono); font-size:1rem;">0 5 * * 1-5</h4><p>local cron / launchd · ICT</p></div>
+        <div class="plus">+</div>
+        <div class="card"><div class="lvl">Skill</div><h4>25-line prompt</h4><p>analyst persona + output schema</p></div>
+      </div>
+      <p class="lede"><i>This is the slide-30 stack — running, today.</i></p>
+
+      <div class="deeplinks">
+        <span class="dlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Monday-morning recap</span>
+        <a class="dl" href="../refs/demo-4-voe-digest-routine.html" target="_blank" rel="noopener">VoE digest · schedule + 3 connectors · ~45 min setup</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 26 · DEMO 4 LIVE ============ -->
+  <!-- type: demo -->
+  <section class="slide" id="slide-30" data-title="Demo 4 LIVE">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="demo-frame">
+        <div class="live-tag">● LIVE DEMO 4 · RAN AT 05:00 ICT</div>
+        <h2>Voice of Employee daily digest</h2>
+        <div class="sub">Yesterday's digest from cron · then live re-run · ~7 min</div>
+      </div>    </div>
+  </section>
+
+  <!-- ============ SLIDE 27 · THE HONEST LINE — agent vs skill ============ -->
+  <!-- type: big-quote -->
+  <section class="slide" id="slide-31" data-title="Demo 5 hero">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Demo 5 of 5 · hosted Routine · laptop closed</div>
+      <h1>Wellness metrics — <span class="teal-underline">Monday brief</span>.</h1>
+      <p class="lede big">Multiple Sheets → Notion exec page. Every Monday 7am. Anthropic-hosted. $0 infra.</p>
+      <div class="three-up">
+        <div class="card"><div class="lvl">MCP</div><h4>2 connectors</h4><p>Google Sheets · Notion</p></div>
+        <div class="plus">+</div>
+        <div class="card"><div class="lvl">Schedule</div><h4 style="font-family:var(--font-mono); font-size:1rem;">0 7 * * 1</h4><p>Mondays · ICT · cloud-run</p></div>
+        <div class="plus">+</div>
+        <div class="card"><div class="lvl">Skill</div><h4>15-line prompt</h4><p>roll-up persona + exec format</p></div>
+      </div>
+      <p class="lede"><i>Where Demo 4 lands when YouTrack OAuth ships. Today, with OAuth-only tools.</i></p>
+
+      <div class="deeplinks">
+        <span class="dlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Monday-morning recap</span>
+        <a class="dl" href="../refs/demo-5-wellness-metrics-roll-up.html" target="_blank" rel="noopener">Wellness roll-up · hosted Routine · ~25 min setup</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-32" data-title="Demo 5 LIVE">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="demo-frame">
+        <div class="live-tag">● LIVE DEMO 5 · CLOSE THE LAPTOP</div>
+        <h2>Wellness metrics weekly roll-up</h2>
+        <div class="sub">Open Notion exec page from this Monday · then close lid · then Run-now · ~6 min</div>
+      </div>    </div>
+  </section>
+
+  <section class="slide" id="slide-33" data-title="Honest line">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="bigquote">
+        You wanted AI that runs your <span class="navy-emphasis">work</span>.<br/>
+        Demo 5 already does that.<br/>
+        <br/>
+        <span style="font-size:0.62em; opacity:0.9; line-height:1.5;">
+        We called it a <span class="teal-underline">skill</span>, not an agent,<br/>
+        so <span class="navy-emphasis">YOU</span> can read it. Edit it. Fix it Monday.<br/>
+        <br/>
+        A skill is the version of "AI that runs your work"<br/>
+        you can actually <span class="teal-underline">own</span>.
+        </span>
+      </div>    </div>
+  </section>
+
+  <!-- ============ PART 3 — slides 28–35 ============ -->
+
+  <!-- ============ SLIDE 28 · THE RUBRIC — 6 dimensions ============ -->
+  <!-- type: visual-scorecard -->
+  <section class="slide" id="slide-34" data-title="The rubric">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Part 3 · The rubric</div>
+      <h1>Score your <span class="teal-underline">skill</span>. 6 dimensions.</h1>
+      <img class="full-image" src="../images/slide-31-rubric-anatomy.png" alt="SKILL.md anatomy with 6 callouts: trigger, token, schema, tool, failure, reuse — each pointing to the part of the file it scores." />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 29 · THE 5-CHECK INTERNET SKILL AUDIT ============ -->
+  <!-- type: reveal -->
+  <section class="slide image-slide" id="slide-35" data-title="5-check audit">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <img class="full-image" src="../images/slide-31-five-magnifying-glasses.png" alt="5-check audit" />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 30 · YOUR TURN — pick your option (A–E) ============ -->
+  <!-- type: activity -->
+  <section class="slide" id="slide-36" data-title="Pick A-E">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Your turn · pick a path</div>
+      <h1>Pick <span class="teal-underline">one</span>. A through E.</h1>
+      <div class="doors n5">
+        <div class="door"><div class="letter">A</div><div class="name">task-extractor</div><div class="hint">Everyone can do this.</div></div>
+        <div class="door"><div class="letter">B</div><div class="name">Cowork "Turn into skill"</div><div class="hint">From a working chat.</div></div>
+        <div class="door"><div class="letter">C</div><div class="name">skill-creator</div><div class="hint">If you can install.</div></div>
+        <div class="door"><div class="letter">D</div><div class="name">Marketplace audit</div><div class="hint">5-check on someone else's.</div></div>
+        <div class="door"><div class="letter">E</div><div class="name">Routine</div><div class="hint">If you have a cadence.</div></div>
+      </div>
+      <img class="full-image" src="../images/slide-32-five-doors-a-to-e.png" alt="5 doors labeled A through E" />    </div>
+  </section>
+
+  <!-- ============ SLIDE 31 · LIVE BUILD — 35 min ============ -->
+  <!-- type: activity -->
+  <section class="slide" id="slide-37" data-title="Live build">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="activity">
+        <div class="timer">35:00</div>
+        <div class="instr">Build your <span class="teal-underline">skill</span>.<br/>I float.</div>
+      </div>    </div>
+  </section>
+
+  <!-- ============ SLIDE 32 · SCORE YOUR SKILL COLD ============ -->
+  <!-- type: activity -->
+  <section class="slide" id="slide-38" data-title="Score cold">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="activity">
+        <div class="timer">5:00</div>
+        <div class="instr">Score your skill <span class="teal-underline">cold</span>.<br/>Lowest dim = your upgrade target.</div>
+      </div>    </div>
+  </section>
+
+  <!-- ============ SLIDE 33 · ROUND-ROBIN COMMIT ============ -->
+  <!-- type: activity -->
+  <section class="slide" id="slide-39" data-title="Round-robin">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="slide-kicker">Round-robin · 30 sec each</div>
+      <h1>Say it out <span class="teal-underline">loud</span>.</h1>
+      <p class="lede big" style="font-family: var(--font-hand); font-size: 2.2rem; line-height: 1.2;">task · shape · score · upgrade · 30-day measure</p>    </div>
+  </section>
+
+  <!-- ============ SLIDE 34 · THE 30-DAY PLAN ============ -->
+  <!-- type: visual-timeline -->
+  <section class="slide image-slide" id="slide-40" data-title="30-day plan">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <img class="full-image" src="../images/slide-36-thirty-day-timeline.png" alt="30-day plan" />
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 35 · CLOSING QUOTE ============ -->
+  <!-- type: big-quote -->
+  <section class="slide" id="slide-41" data-title="Closing">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="bigquote">
+        "One skill is a demo.<br/>
+        Five skills is a <span class="teal-underline">system</span>.<br/>
+        Five skills without <span class="navy-emphasis">discipline</span><br/>
+        is a junkyard."
+        <span class="attrib">— Tony</span>
+      </div>    </div>
+  </section>
+
+  <!-- ============ SLIDE 39 · THANK YOU ============ -->
+  <section class="slide" id="slide-42" data-title="Thank you">
+    <span class="slide-num"></span>
+    <div class="wrap">
+      <div class="thanks">
+        <img class="thanks-avatar" src="../images/tony-avatar.jpg" alt="Tony Bùi" />
+        <h1 class="hand">Thank you.</h1>
+        <p class="lede big">Questions, stories, or wins from the live build &mdash; the floor is yours.</p>
+        <div class="thanks-contact">
+          <a href="https://www.linkedin.com/in/bnqtoan/" target="_blank" rel="noopener">linkedin.com/in/bnqtoan</a>
+          <span class="dot">·</span>
+          <a href="https://www.facebook.com/tony.40047" target="_blank" rel="noopener">fb.com/tony.40047</a>
+          <span class="dot">·</span>
+          <a href="http://arealisticdreamer.com/" target="_blank" rel="noopener">arealisticdreamer.com</a>
+        </div>
+        <div class="meta">
+          <span>Tony Bùi</span>
+          <span>WebMD Health Services Vietnam · Session 2 of 2</span>
+          <span>Mon 11/05/2026</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ PRESENTER BAR ============ -->
+<div class="bar" id="bar">
+  <button id="prev">←</button>
+  <span class="pg" id="pg">01 / 36</span>
+  <button id="next">→</button>
+  <span class="mode" id="modeBadge">stage on</span>
+  <button id="toggleStage" title="Toggle stage cues (S)">S</button>
+  <button id="fs" title="Fullscreen (F)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
+</div>
+
+<script>
+  // Dynamic slide numbering — writes "NN/total" into each .slide-num.
+  // Idempotent: clears existing content before writing.
+  function numberSlides() {
+    const all = document.querySelectorAll(".slide");
+    const total = all.length;
+    const pad = (n) => String(n).padStart(2, "0");
+    document.documentElement.style.setProperty("--total-slides", total);
+    all.forEach((slide, i) => {
+      const num = slide.querySelector(".slide-num");
+      if (!num) return;
+      num.textContent = "";
+      num.textContent = pad(i + 1) + "/" + pad(total);
+    });
+  }
+  document.addEventListener("DOMContentLoaded", numberSlides);
+
+  const deck = document.getElementById("deck");
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  const pg = document.getElementById("pg");
+  const modeBadge = document.getElementById("modeBadge");
+  let current = 0;
+
+  // Parse desired initial slide from URL hash BEFORE wiring the observer,
+  // so the observer's first firing (on slide-1 at top of doc) doesn't
+  // overwrite the hash.
+  function hashIndex() {
+    const m = location.hash.match(/^#slide-(\d+)$/);
+    if (!m) return -1;
+    const idx = parseInt(m[1], 10) - 1;
+    return (idx >= 0 && idx < slides.length) ? idx : -1;
+  }
+  let initialIdx = hashIndex();
+  // Suppress hash writes from the observer until we've completed the initial jump.
+  let hashWritesEnabled = (initialIdx === -1);
+
+  // Jump immediately (before paint) so the user never sees slide 1 flash.
+  if (initialIdx >= 0) {
+    // Use instant scroll; setTimeout(0) lets layout settle first.
+    requestAnimationFrame(() => {
+      slides[initialIdx].scrollIntoView({ behavior: "auto" });
+      current = initialIdx;
+      // Allow the observer to run a few frames, then re-enable hash writes.
+      setTimeout(() => { hashWritesEnabled = true; }, 400);
+    });
+  }
+
+  // intersection observer — track current slide + animate + write URL hash
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add("in-view");
+        const idx = slides.indexOf(e.target);
+        if (idx >= 0) {
+          current = idx;
+          pg.textContent = String(idx + 1).padStart(2, "0") + " / " + String(slides.length).padStart(2, "0");
+          if (hashWritesEnabled) {
+            const newHash = "#slide-" + (idx + 1);
+            if (location.hash !== newHash) history.replaceState(null, "", newHash);
+          }
+        }
+      }
+    });
+  }, { threshold: 0.4 });
+  slides.forEach(s => obs.observe(s));
+
+  // Manual hashchange (user edits URL or navigates back/forward) → jump.
+  window.addEventListener("hashchange", () => {
+    const idx = hashIndex();
+    if (idx >= 0 && idx !== current) goto(idx);
+  });
+
+  function goto(idx) {
+    idx = Math.max(0, Math.min(slides.length - 1, idx));
+    slides[idx].scrollIntoView({ behavior: "smooth" });
+  }
+
+  function toggleStage() {
+    document.body.classList.toggle("hide-stage");
+    modeBadge.textContent = document.body.classList.contains("hide-stage") ? "stage off" : "stage on";
+  }
+
+  function toggleFs() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+  }
+
+  document.getElementById("prev").addEventListener("click", () => goto(current - 1));
+  document.getElementById("next").addEventListener("click", () => goto(current + 1));
+  document.getElementById("toggleStage").addEventListener("click", toggleStage);
+  document.getElementById("fs").addEventListener("click", toggleFs);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    switch (e.key) {
+      case "ArrowRight": case "PageDown": case " ":
+        e.preventDefault(); goto(current + 1); break;
+      case "ArrowLeft": case "PageUp":
+        e.preventDefault(); goto(current - 1); break;
+      case "Home": e.preventDefault(); goto(0); break;
+      case "End": e.preventDefault(); goto(slides.length - 1); break;
+      case "s": case "S":
+        e.preventDefault(); toggleStage(); break;
+      case "f": case "F":
+        e.preventDefault(); toggleFs(); break;
+      case "Escape":
+        e.preventDefault(); toggleGrid(); break;
+      case "g": case "G":
+        e.preventDefault(); toggleGrid(); break;
+    }
+  });
+
+  // ===== Grid view (Esc / G) =====
+  function buildGrid() {
+    const wrap = document.getElementById("gridOverlay");
+    if (wrap.dataset.built === "1") return;
+    const inner = wrap.querySelector(".grid-inner");
+    slides.forEach((s, i) => {
+      const thumb = document.createElement("button");
+      thumb.className = "thumb";
+      thumb.setAttribute("data-idx", i);
+      const title = s.getAttribute("data-title") || "";
+      const img = s.querySelector("img");
+      thumb.innerHTML =
+        '<div class="thumb-num">' + String(i + 1).padStart(2, "0") + "</div>" +
+        (img ? '<img src="' + img.getAttribute("src") + '" alt="" />' : '<div class="thumb-empty">' + title + "</div>") +
+        '<div class="thumb-title">' + title + "</div>";
+      thumb.addEventListener("click", () => {
+        toggleGrid(false);
+        goto(i);
+      });
+      inner.appendChild(thumb);
+    });
+    wrap.dataset.built = "1";
+  }
+
+  function toggleGrid(force) {
+    const wrap = document.getElementById("gridOverlay");
+    const open = (force === undefined) ? !wrap.classList.contains("open") : !!force;
+    if (open) {
+      buildGrid();
+      wrap.classList.add("open");
+      // Highlight current
+      wrap.querySelectorAll(".thumb").forEach((t, i) => {
+        t.classList.toggle("active", i === current);
+      });
+      // Scroll active into view
+      const active = wrap.querySelector(".thumb.active");
+      if (active) active.scrollIntoView({ block: "nearest" });
+    } else {
+      wrap.classList.remove("open");
+    }
+  }
+
+  // Click outside the grid (on the backdrop) closes it
+  document.addEventListener("click", (e) => {
+    const wrap = document.getElementById("gridOverlay");
+    if (wrap.classList.contains("open") && e.target === wrap) {
+      toggleGrid(false);
+    }
+  });
+
+
+  // ===== Kitchen tab toggle (slide 15) — T also toggles when on slide 15 =====
+  (function () {
+    const tabs = document.querySelectorAll(".kitchen-tabs .tab");
+    const imgs = document.querySelectorAll(".kitchen-tabs .kitchen-img");
+    if (!tabs.length) return;
+    function show(view) {
+      tabs.forEach(t => t.classList.toggle("active", t.dataset.view === view));
+      imgs.forEach(i => i.classList.toggle("active", i.classList.contains("kitchen-" + view)));
+    }
+    tabs.forEach(t => t.addEventListener("click", () => show(t.dataset.view)));
+    document.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.key !== "t" && e.key !== "T") return;
+      // only toggle when slide 15 is current (kitchen tabs in viewport)
+      const sec15 = document.getElementById("slide-15");
+      if (!sec15) return;
+      const r = sec15.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.7 && r.bottom > window.innerHeight * 0.3) {
+        e.preventDefault();
+        const cur = document.querySelector(".kitchen-tabs .tab.active")?.dataset.view;
+        show(cur === "skill" ? "agent" : "skill");
+      }
+    });
+  })();
+
+</script>
+
+
+<!-- Grid overlay (Esc to toggle) -->
+<div id="gridOverlay" class="grid-overlay" role="dialog" aria-label="Slide overview" aria-hidden="true">
+  <div class="grid-inner"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Demo 2 — Design system Q&amp;A · Monday-morning recap</title>
+<meta name="description" content="You saw the demo. Here's how to recreate it Monday. Project + MCP shape — corpus lookup, not transformation." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --dark: #141413; --light: #faf9f5; --mid: #b0aea5; --light-gray: #e8e6dc;
+    --teal: #3BC6D9; --teal-deep: #1B7A8A;
+    --navy: #1E2A78; --orange: #d97757; --green: #788c5d;
+    --font-head: "Be Vietnam Pro", system-ui, sans-serif;
+    --font-body: "Lora", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--light); color: var(--dark); line-height: 1.65; -webkit-font-smoothing: antialiased; padding: 48px 5vw 64px; }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  header { margin-bottom: 36px; }
+  .kicker { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal-deep); margin-bottom: 14px; }
+  h1 { font-family: var(--font-head); font-weight: 700; font-size: clamp(1.9rem, 4.4vw, 2.6rem); line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.02em; }
+  h1 .mark { color: var(--teal-deep); font-style: italic; font-family: var(--font-body); font-weight: 400; }
+  .sub { font-family: var(--font-body); font-style: italic; font-size: 1.08rem; opacity: 0.72; max-width: 700px; }
+  .meta { font-family: var(--font-mono); font-size: 11px; opacity: 0.5; margin-top: 12px; }
+  h2 { font-family: var(--font-head); font-size: 1.35rem; font-weight: 600; margin: 40px 0 14px; letter-spacing: -0.01em; }
+  h2::before { content: ""; display: inline-block; width: 28px; height: 2px; background: var(--teal-deep); vertical-align: middle; margin-right: 12px; transform: translateY(-3px); }
+  h3 { font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+  p, li { font-size: 1.02rem; }
+  ol, ul { padding-left: 22px; }
+  ol li { margin-bottom: 12px; }
+  ol li::marker { font-family: var(--font-mono); font-weight: 600; color: var(--teal-deep); }
+  code { font-family: var(--font-mono); font-size: 0.92em; background: var(--light-gray); padding: 1px 6px; border-radius: 3px; }
+  pre { font-family: var(--font-mono); font-size: 0.88rem; background: #1f1d1c; color: #e8e6dc; padding: 18px 20px; border-radius: 6px; overflow-x: auto; line-height: 1.55; }
+  pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+  .lede { font-size: 1.15rem; line-height: 1.6; padding: 18px 22px; background: rgba(59,198,217,0.08); border-left: 4px solid var(--teal-deep); border-radius: 4px; margin: 22px 0; }
+  .lede strong { color: var(--teal-deep); }
+  .gotcha { font-size: 1rem; padding: 16px 20px; background: rgba(217,119,87,0.08); border-left: 4px solid var(--orange); border-radius: 4px; margin: 22px 0; }
+  .gotcha strong { color: var(--orange); }
+  .stack { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 18px 0 8px; }
+  .stack-card { padding: 14px 16px; background: var(--light-gray); border-radius: 6px; }
+  .stack-card .label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-deep); margin-bottom: 6px; }
+  .stack-card .val { font-family: var(--font-head); font-size: 0.96rem; font-weight: 600; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 18px 0; }
+  .compare > div { padding: 18px 20px; background: var(--light-gray); border-radius: 6px; }
+  .compare h4 { font-family: var(--font-head); font-size: 1.05rem; font-weight: 600; margin: 0 0 8px; color: var(--teal-deep); }
+  .compare p { margin: 0; font-size: 0.96rem; }
+  footer { margin-top: 60px; padding-top: 22px; border-top: 1px solid var(--light-gray); font-size: 0.88rem; opacity: 0.7; }
+  footer a { color: var(--teal-deep); }
+  @media (max-width: 640px) { .compare { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Demo 2 · Monday-morning recap</div>
+    <h1>Design system Q&amp;A — <span class="mark">project + MCP</span></h1>
+    <p class="sub">When the answer is in a corpus and the question changes every time. Not a transformation, a lookup. About 15 minutes to set up.</p>
+    <div class="meta">Workshop session 2 · 11/05/2026 · WebMD HS Vietnam</div>
+  </header>
+
+  <div class="lede">
+    <strong>Shape:</strong> project + MCP. Two paths — Claude Project for narrative docs (passive corpus, snapshot), or Figma MCP for live design tokens. Pick by question type.
+  </div>
+
+  <h2>Stack</h2>
+  <div class="stack">
+    <div class="stack-card"><div class="label">Surface</div><div class="val">Claude.ai Project (web)</div></div>
+    <div class="stack-card"><div class="label">Knowledge</div><div class="val">PDF · DOCX · MD · HTML</div></div>
+    <div class="stack-card"><div class="label">Limit</div><div class="val">≤30 MB per file</div></div>
+    <div class="stack-card"><div class="label">Optional MCP</div><div class="val">Figma remote MCP</div></div>
+  </div>
+
+  <h2>Prerequisites</h2>
+  <ul>
+    <li>Claude Pro / Team subscription (Projects feature)</li>
+    <li>Design system docs as PDF / DOCX / MD / HTML — tokens, components, voice/tone, accessibility</li>
+    <li><em>Optional:</em> Figma seat + browser access for OAuth</li>
+  </ul>
+
+  <h2>Path A — Claude Project (narrative docs)</h2>
+  <ol>
+    <li>Open <code>claude.ai</code> → Projects → New Project → name it <em>"Design System"</em>.</li>
+    <li>Click <em>"Add knowledge"</em> in the project sidebar. Drag in <code>tokens.md</code>, <code>components.pdf</code>, <code>voice-tone.md</code>, <code>accessibility.md</code>. (Up to 30 MB per file, unlimited count.)</li>
+    <li>Add a project-level system prompt:
+<pre><code>Always answer from project knowledge.
+Cite the filename.
+If not in knowledge, say so.</code></pre>
+    </li>
+    <li>Open a chat inside the project — every message uses the corpus automatically. No special syntax.</li>
+    <li>Ask plain questions: <em>"What's our spacing scale?"</em>, <em>"Do we have a destructive button variant?"</em></li>
+    <li>Citations: Claude shows file pills under answers when content is retrieved.</li>
+  </ol>
+
+  <h2>Path B — Figma MCP (live tokens, optional)</h2>
+  <ol>
+    <li>In Claude Code:
+<pre><code>claude mcp add figma \
+  --transport http \
+  https://mcp.figma.com/mcp</code></pre>
+      Browser will pop OAuth.
+    </li>
+    <li>Open Figma, select a frame.</li>
+    <li>Ask Claude: <em>"What tokens does this frame use?"</em></li>
+    <li>Claude reads live components, variables, and styles via MCP — no snapshot drift.</li>
+  </ol>
+
+  <h2>Project vs MCP — which when</h2>
+  <div class="compare">
+    <div>
+      <h4>Use Project for</h4>
+      <p>Voice/tone guides, accessibility principles, onboarding docs, anything narrative. Good when the source updates monthly.</p>
+    </div>
+    <div>
+      <h4>Use Figma MCP for</h4>
+      <p>Tokens, components, color/spacing variables. Good when the source updates daily and you need source-of-truth answers.</p>
+    </div>
+  </div>
+
+  <div class="gotcha">
+    <strong>Gotcha:</strong> Project knowledge is a <em>snapshot</em> — when designers update Figma, the Project files go stale silently. For source-of-truth questions use Figma MCP. For narrative docs use Project. Don't mix them in one project — answers will conflict.
+  </div>
+
+  <h2>If you get it wrong on Monday</h2>
+  <ul>
+    <li><strong>Citations not showing</strong> → file too small to trigger RAG mode (Claude inlines short knowledge). Add more files.</li>
+    <li><strong>Answers contradict the actual design system</strong> → snapshot is stale. Re-upload, or switch to Figma MCP.</li>
+    <li><strong>Designers can't access the Project</strong> → Projects are per-user on Pro. Move to Team plan for sharing.</li>
+  </ul>
+
+  <footer>
+    Sources:
+    <a href="https://support.claude.com/en/articles/8241126-upload-files-to-claude">Claude file upload limits</a> ·
+    <a href="https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server">Figma MCP guide</a>
+    <br/>
+    Verified May 10, 2026.
+  </footer>
+</div>
+</body>
+</html>
